@@ -9,9 +9,8 @@ namespace AdventOfCode.Utilities
     {
         private static readonly Regex _intRegex = new Regex(@"([+-]?\d+)", RegexOptions.Compiled);
 
-        public static IEnumerable<string> Lines(this string s)
+        public static IEnumerable<string> Lines(this string s, StringSplitOptions options = StringSplitOptions.RemoveEmptyEntries)
         {
-            var options = StringSplitOptions.RemoveEmptyEntries;
             return s.Split(new[] {'\r', '\n'}, options);
         }
 
