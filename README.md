@@ -1,6 +1,6 @@
 
 # Advent of Code (2015-2019)
-My C# solutions to the advent of code problems.
+My C# solutions to the advent of code problems (My solutions are in the "solutions" branch. The master branch contains the scaffolding).
 Check out http://adventofcode.com.
 
 ## Dependencies
