@@ -54,5 +54,10 @@ namespace AdventOfCode
         {
             return source.Substring(0, match.Index) + replacement + source.Substring(match.Index + match.Length);
         }
+
+        public static string Slice(this string s, int startIndex, int endIndex)
+        {
+            return s.Substring(startIndex, endIndex - startIndex);
+        }
     }
 }
