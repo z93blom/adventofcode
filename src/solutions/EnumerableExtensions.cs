@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -56,5 +57,22 @@ namespace AdventOfCode
                 yield return new Grouping<T, T>(key, Enumerable.Repeat(key, count));
             }
         }
-    }
+
+
+        public static Dictionary<TKey, TValue> ToDictionaryIgnoreDuplicates<T, TKey, TValue>(this IEnumerable<T> source,
+            Func<T, TKey> keySelector, Func<T, TValue> valueSelector)
+        {
+            var dict = new Dictionary<TKey, TValue>();
+            foreach (var t in source)
+            {
+                var key = keySelector(t);
+                if (!dict.ContainsKey(key))
+                {
+                    var value = valueSelector(t);
+                    dict.Add(key, value);
+                }
+            }
+
+            return dict;
+        }    }
 }
