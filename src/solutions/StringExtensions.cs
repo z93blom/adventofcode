@@ -59,5 +59,12 @@ namespace AdventOfCode
         {
             return s.Substring(startIndex, endIndex - startIndex);
         }
+
+        public static bool Matches(this string s, string pattern, out Group[] groups)
+        {
+            var match = Regex.Match(s, pattern);
+            groups = match.Groups.Cast<Group>().ToArray();
+            return match.Success;
+        }
     }
 }
