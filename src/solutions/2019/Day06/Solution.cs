@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -61,6 +62,7 @@ namespace AdventOfCode.Y2019.Day06 {
             var edges = input.Lines()
                 .Select(l => new Edge<string>(l.Substring(0, 3), l.Substring(4, 3)));
             var graph = new QuickGraph.BidirectionalGraph<string, Edge<string>>();
+            var outerToInner = new Dictionary<string, string>();
             foreach (var edge in edges)
             {
                 graph.AddVertex(edge.Source);
@@ -70,18 +72,38 @@ namespace AdventOfCode.Y2019.Day06 {
                 }
 
                 graph.AddEdge(edge);
+                outerToInner[edge.Target] = edge.Source;
             }
 
-            //https://github.com/YaccConstructor/QuickGraph/wiki/Floyd-Warshall-All-Path-Shortest-Path
-            var s = new QuickGraph.Algorithms.ShortestPath.FloydWarshallAllShortestPathAlgorithm<string, Edge<string>>(graph, e => 1);
-            s.Compute();
-            if (!s.TryGetPath("YOU", "SAN", out var path))
+            var youPath = new List<string>();
+            var current = "YOU";
+            do
             {
-                throw new Exception("No path found!");
+                youPath.Add(current);
+                current = outerToInner[current];
+            } while (current != "COM");
+
+            var sanPath = new List<string>();
+            current = "SAN";
+            do
+            {
+                sanPath.Add(current);
+                current = outerToInner[current];
+            } while (current != "COM");
+
+
+            // Find the last common instance between the two paths
+            var outermostCommon = string.Empty;
+            foreach (var c in youPath)
+            {
+                if (sanPath.Contains(c))
+                {
+                    outermostCommon = c;
+                    break;
+                }
             }
 
-            return path.Count() - 2;
-
+            return youPath.IndexOf(outermostCommon) + sanPath.IndexOf(outermostCommon) - 2;
         }
     }
 }
