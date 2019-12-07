@@ -7,18 +7,40 @@ namespace AdventOfCode.Y2019
 {
     class IntCode
     {
-        private readonly Func<IntCode, int> _input;
-        private readonly Action<int> _output;
+        private List<int> _input = new List<int>();
+        private int _inputIndex = 0;
+
+        private List<int> _output = new List<int>();
+
+        private int _outputIndex = 0;
+
         private readonly List<int> _memory;
+        private ProgramState _state;
+
         private int InstructionPointer { get; set; }
 
-        public IntCode(string program, Func<IntCode, int> input, Action<int> output)
+        public IntCode(string program)
         {
-            _input = input;
-            _output = output;
             _memory = program.Split(',').Select(int.Parse).ToList();
+            _state = ProgramState.NotStarted;
             InstructionPointer = 0;
         }
+
+        public void ProvideInput(int value)
+        {
+            _input.Add(value);
+        }
+
+        public bool HasOutput => _output.Count > _outputIndex;
+
+        public int ReadOutput()
+        {
+            return _output[_outputIndex++];
+        }
+
+        public ProgramState State => _state;
+
+        public List<int> AllOutputs => _output;
 
         public void Run()
         {
@@ -28,7 +50,7 @@ namespace AdventOfCode.Y2019
             }
         }
 
-        private ProgramState ExecuteInstruction()
+        public ProgramState ExecuteInstruction()
         {
             var opCode = GetOpCode();
             switch (opCode)
@@ -42,7 +64,8 @@ namespace AdventOfCode.Y2019
                     var position = GetPosition(2);
                     this[position] = val;
                     InstructionPointer += 4;
-                    return ProgramState.Running;
+                    _state = ProgramState.Running;
+                    return _state;
                 }
 
                 case 2:
@@ -54,26 +77,35 @@ namespace AdventOfCode.Y2019
                     var position = GetPosition(2);
                     this[position] = val;
                     InstructionPointer += 4;
-                    return ProgramState.Running;
+                    _state = ProgramState.Running;
+                    return _state;
                 }
 
                 case 3:
                 {
                     // input 
-                    var val = _input(this);
+                    if (_input.Count <= _inputIndex)
+                    {
+                    _state = ProgramState.WaitingForInput;
+                    return _state;
+                    }
+
+                    var val = _input[_inputIndex++];
                     var position = GetPosition(0);
                     this[position] = val;
                     InstructionPointer += 2;
-                    return ProgramState.Running;
+                    _state = ProgramState.Running;
+                    return _state;
                 }
 
                 case 4:
                 {
                     // outputs 
                     var value = GetValue(0);
-                    _output(value);
+                    _output.Add(value);
                     InstructionPointer += 2;
-                    return ProgramState.Running;
+                    _state = ProgramState.Running;
+                    return _state;
                 }
 
                 case 5:
@@ -89,7 +121,9 @@ namespace AdventOfCode.Y2019
                     {
                         InstructionPointer += 3;
                     }
-                    return ProgramState.Running;
+
+                    _state = ProgramState.Running;
+                    return _state;
                 }
 
                 case 6:
@@ -105,7 +139,9 @@ namespace AdventOfCode.Y2019
                     {
                         InstructionPointer += 3;
                     }
-                    return ProgramState.Running;
+
+                    _state = ProgramState.Running;
+                    return _state;
                 }
 
                 case 7:
@@ -117,7 +153,8 @@ namespace AdventOfCode.Y2019
                     var position = GetPosition(2);
                     this[position] = value;
                     InstructionPointer += 4;
-                    return ProgramState.Running;
+                    _state = ProgramState.Running;
+                    return _state;
                 }
 
                 case 8:
@@ -129,12 +166,14 @@ namespace AdventOfCode.Y2019
                     var position = GetPosition(2);
                     this[position] = value;
                     InstructionPointer += 4;
-                    return ProgramState.Running;
+                    _state = ProgramState.Running;
+                    return _state;
                 }
 
                 case 99:
                 {
-                    return ProgramState.Finished;
+                    _state = ProgramState.Finished;
+                    return _state;
                 }
 
                 default:

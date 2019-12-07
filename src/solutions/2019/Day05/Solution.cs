@@ -17,9 +17,10 @@ namespace AdventOfCode.Y2019.Day05 {
         object PartOne(string input)
         {
             var output = new List<int>();
-            var computer = new IntCode(input, c => 1, o => output.Add(o));
+            var computer = new IntCode(input);
+            computer.ProvideInput(1);
             computer.Run();
-            if (output.Take(output.Count - 1).Any(v => v != 0))
+            if (computer.AllOutputs.Take(output.Count - 1).Any(v => v != 0))
             {
                 throw new Exception("Something is wrong with the computer.");
             }
@@ -28,14 +29,14 @@ namespace AdventOfCode.Y2019.Day05 {
         }
 
         object PartTwo(string input) {
-            var output = new List<int>();
-            var computer = new IntCode(input, c => 5, o => output.Add(o));
+            var computer = new IntCode(input);
+            computer.ProvideInput(5);
             computer.Run();
-            if (output.Count != 1)
+            if (computer.AllOutputs.Count != 1)
             {
                 throw new Exception("Computer doesn't work as expected.");
             }
-            return output[output.Count - 1];
+            return computer.AllOutputs[computer.AllOutputs.Count - 1];
         }
     }
 }

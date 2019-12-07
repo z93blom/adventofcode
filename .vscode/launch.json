@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/app/bin/Debug/netcoreapp2.2/app.dll",
-            "args": ["2015"],
+            "args": ["last"],
             "cwd": "${workspaceFolder}",
             "console": "internalConsole",
             "stopAtEntry": false
