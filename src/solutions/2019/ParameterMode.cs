@@ -4,6 +4,8 @@ namespace AdventOfCode.Y2019
     {
         Position = 0,
 
-        Immediate = 1
+        Immediate = 1,
+
+        Relative = 2,
     }
 }

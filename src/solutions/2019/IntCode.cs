@@ -2,45 +2,48 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AdventOfCode.Y2019.Day05;
+using Newtonsoft.Json.Serialization;
 
 namespace AdventOfCode.Y2019
 {
     class IntCode
     {
-        private List<int> _input = new List<int>();
+        private List<long> _input = new List<long>();
         private int _inputIndex = 0;
 
-        private List<int> _output = new List<int>();
+        private readonly List<long> _output = new List<long>();
 
         private int _outputIndex = 0;
 
-        private readonly List<int> _memory;
+        private readonly Dictionary<long, long> _memory;
         private ProgramState _state;
+        private long _relativeBaseOffset = 0;
 
-        private int InstructionPointer { get; set; }
+        private long InstructionPointer { get; set; }
 
         public IntCode(string program)
         {
-            _memory = program.Split(',').Select(int.Parse).ToList();
+            var address = 0L;
+            _memory = program.Split(',').Select(long.Parse).ToDictionary(v => address++, v => v);
             _state = ProgramState.NotStarted;
             InstructionPointer = 0;
         }
 
-        public void ProvideInput(int value)
+        public void ProvideInput(long value)
         {
             _input.Add(value);
         }
 
         public bool HasOutput => _output.Count > _outputIndex;
 
-        public int ReadOutput()
+        public long ReadOutput()
         {
             return _output[_outputIndex++];
         }
 
         public ProgramState State => _state;
 
-        public List<int> AllOutputs => _output;
+        public List<long> AllOutputs => _output;
 
         public void Run()
         {
@@ -86,7 +89,7 @@ namespace AdventOfCode.Y2019
                     // input 
                     if (_input.Count <= _inputIndex)
                     {
-                    _state = ProgramState.WaitingForInput;
+                        _state = ProgramState.WaitingForInput;
                     return _state;
                     }
 
@@ -170,6 +173,15 @@ namespace AdventOfCode.Y2019
                     return _state;
                 }
 
+                case 9:
+                {
+                    var val = GetValue(0);
+                    _relativeBaseOffset += val;
+                    InstructionPointer += 2;
+                    _state = ProgramState.Running;
+                    return _state;
+                }
+
                 case 99:
                 {
                     _state = ProgramState.Finished;
@@ -181,31 +193,34 @@ namespace AdventOfCode.Y2019
             }
         }
 
-        private int GetOpCode()
+        private long GetOpCode()
         {
             return Current % 100;
         }
 
-        private int this[int index]
+        private long this[long index]
         {
-            get => _memory[index];
+            get => _memory.ContainsKey(index) ? _memory[index] : 0;
             set => _memory[index] = value;
         }
 
-        private int Current => this[this.InstructionPointer];
+        private long Current => this[this.InstructionPointer];
 
-        private int GetValue(int parameterIndex)
+        private long GetValue(int instructionPointerOffset)
         {
-            var parameterMode = GetParameterMode(Current, parameterIndex);
-            int value;
+            var parameterMode = GetParameterMode(Current, instructionPointerOffset);
+            long value;
             switch (parameterMode)
             {
                 case ParameterMode.Position:
-                    var position = this[InstructionPointer + parameterIndex + 1];
+                    var position = this[InstructionPointer + instructionPointerOffset + 1];
                     value = this[position];
                     break;
                 case ParameterMode.Immediate:
-                    value = this[InstructionPointer + parameterIndex + 1];
+                    value = this[InstructionPointer + instructionPointerOffset + 1];
+                    break;
+                case ParameterMode.Relative:
+                    value = this[_relativeBaseOffset + this[InstructionPointer + instructionPointerOffset + 1]];
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -214,7 +229,7 @@ namespace AdventOfCode.Y2019
             return value;
         }
 
-        private int GetPosition(int parameterIndex)
+        private long GetPosition(int parameterIndex)
         {
             var parameterMode = GetParameterMode(Current, parameterIndex);
             if (parameterMode == ParameterMode.Position)
@@ -222,11 +237,16 @@ namespace AdventOfCode.Y2019
                 var position = this[InstructionPointer + parameterIndex + 1];
                 return position;
             }
+            else if (parameterMode == ParameterMode.Relative)
+            {
+                var position = _relativeBaseOffset + this[InstructionPointer + parameterIndex + 1];
+                return position;
+            }
 
             throw new Exception("Invalid parameter mode for getting the position.");
         }
 
-        private ParameterMode GetParameterMode(int instruction, int parameterIndex)
+        private ParameterMode GetParameterMode(long instruction, int parameterIndex)
         {
             var modes = instruction / 100;
             if (modes == 0)
@@ -242,6 +262,7 @@ namespace AdventOfCode.Y2019
             var c = text[text.Length - 1 - parameterIndex];
             if (c == '0') return ParameterMode.Position;
             if (c == '1') return ParameterMode.Immediate;
+            if (c == '2') return ParameterMode.Relative;
             throw new Exception($"Unknown parameter mode ('{c}')");
         }
     }

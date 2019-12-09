@@ -21,10 +21,10 @@ namespace AdventOfCode.Y2019.Day07 {
         object PartOne(string input) 
         {
             var ampSettings = Enumerable.Range(0, 5).Permutate();
-            var maxOutput = int.MinValue;
+            var maxOutput = long.MinValue;
             foreach(var ampSetting in ampSettings)
             {
-                var ampInput = new int[5 + 1];
+                var ampInput = new long[5 + 1];
                 for(var index = 0; index < 5; index++)
                 {
                     var comp = new IntCode(input);
@@ -59,7 +59,7 @@ namespace AdventOfCode.Y2019.Day07 {
 
         object PartTwo(string input) {
             var ampSettings = Enumerable.Range(5, 5).Permutate();
-            var maxOutput = int.MinValue;
+            var maxOutput = long.MinValue;
             foreach(var ampSetting in ampSettings)
             {
                 // Need to run all 5 computers, entering the output from each one
