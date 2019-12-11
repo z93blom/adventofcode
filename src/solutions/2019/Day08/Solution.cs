@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Text;
@@ -49,15 +50,30 @@ namespace AdventOfCode.Y2019.Day08 {
             }
 
             var text = finalImage.ToString();
-            for(var l = 0; l < 6; l++)
+
+            var sif = new Sif();
+            for (var l = 0; l < 6; l++)
             {
                 var line = text.Substring(25 * l, 25);
-                var t = line.Replace('0', ' ');
-                t = t.Replace('1', '█');
-                Console.WriteLine(t);
+                for (var ci = 0; ci < 25; ci++)
+                {
+                    sif.SetColor(new Point(ci, l), line[ci] == '0' ? Sif.Color.Black : Sif.Color.White);
+                }
+
             }
 
-            return "ZYBLH";
+            sif.Draw(Console.Out);
+            return sif.OCR();
+
+            //for (var l = 0; l < 6; l++)
+            //{
+            //    var line = text.Substring(25 * l, 25);
+            //    var t = line.Replace('0', ' ');
+            //    t = t.Replace('1', '█');
+            //    Console.WriteLine(t);
+            //}
+            //
+            //return "ZYBLH";
         }
     }
 }

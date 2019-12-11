@@ -20,20 +20,22 @@ namespace AdventOfCode.Y2019.Day11 {
 
         object PartOne(string input) {
             var painted = new HashSet<Point>();
-            var colors = new Dictionary<Point, Color>();
+            var sif = new Sif();
             var direction = Direction.Up;
             var location = new Point(0, 0);
             var vm = new IntCode(input);
             while (vm.State != ProgramState.Finished)
             {
-                vm.ProvideInput((long) GetColor(colors, location));
+                var currentColor = sif.GetColor(location);
+                currentColor = currentColor == Sif.Color.Transparent ? Sif.Color.Black : currentColor;
+                vm.ProvideInput((long)currentColor);
                 vm.RunToNextInputOrFinished();
 
                 // Get the output (if any)
                 if (vm.HasOutput)
                 {
-                    var color = (Color) vm.ReadOutput();
-                    colors[location] = color;
+                    var color = (Sif.Color) vm.ReadOutput();
+                    sif.SetColor(location, color);
                     painted.Add(location);
 
                     var turn = vm.ReadOutput();
@@ -73,21 +75,23 @@ namespace AdventOfCode.Y2019.Day11 {
 
         object PartTwo(string input)
         {
-            var colors = new Dictionary<Point, Color>();
+            var sif = new Sif();
             var direction = Direction.Up;
             var location = new Point(0, 0);
-            colors[location] = Color.White;
+            sif.SetColor(location, Sif.Color.White);
             var vm = new IntCode(input);
             while (vm.State != ProgramState.Finished)
             {
-                vm.ProvideInput((long)GetColor(colors, location));
+                var currentColor = sif.GetColor(location);
+                var vmInput = currentColor == Sif.Color.White ? 1 : 0;
+                vm.ProvideInput(vmInput);
                 vm.RunToNextInputOrFinished();
 
                 // Get the output (if any)
                 if (vm.HasOutput)
                 {
-                    var color = (Color)vm.ReadOutput();
-                    colors[location] = color;
+                    var color = (Sif.Color)vm.ReadOutput();
+                    sif.SetColor(location, color);
 
                     var turn = vm.ReadOutput();
                     if (turn == 0)
@@ -122,22 +126,9 @@ namespace AdventOfCode.Y2019.Day11 {
             }
 
             // Gah. Should've trusted my instincts and made the SIF OCR.
-            var minX = colors.Keys.Min(p => p.X);
-            var maxX = colors.Keys.Max(p => p.X);
-            var minY = colors.Keys.Min(p => p.Y);
-            var maxY = colors.Keys.Max(p => p.Y);
-            for (var y = minY; y <= maxY; y++)
-            {
-                for (var x = minX; x <= maxX; x++)
-                {
-                    Console.Write(GetColor(colors, new Point(x, y)) == Color.White ? "█" : " ");
-                }
-
-                Console.WriteLine();
-            }
-
+            sif.Draw(Console.Out);
             return "JZPJRAGJ";
-         }
+        }
 
         private Color GetColor(Dictionary<Point, Color> colors, Point location)
         {
