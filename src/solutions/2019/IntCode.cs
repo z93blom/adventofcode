@@ -207,7 +207,7 @@ namespace AdventOfCode.Y2019
             return Current % 100;
         }
 
-        private long this[long index]
+        public long this[long index]
         {
             get => _memory.ContainsKey(index) ? _memory[index] : 0;
             set => _memory[index] = value;
