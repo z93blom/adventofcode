@@ -115,35 +115,6 @@ namespace AdventOfCode.Y2019.Day12 {
             }
 
             return GetGCF(loops[0], GetGCF(loops[1], loops[2]));
-
-            //var loop = new long[3];
-            //for (var axis = 0; axis < 3; axis++)
-            //{
-            //    var steps = 0L;
-            //    do
-            //    {
-            //        loop[axis]++;
-            //        var newPositions = new int[positions.Length];
-            //        for (var i = axis; i < positions.Length; i += 3)
-            //        {
-            //            // Apply Gravity
-            //            var thisPosition = positions[i];
-            //            velocities[i] = velocities[i] +
-            //                            positions[axis].CompareTo(thisPosition) +
-            //                            positions[axis + 3].CompareTo(thisPosition) +
-            //                            positions[axis + 6].CompareTo(thisPosition) +
-            //                            positions[axis + 9].CompareTo(thisPosition);
-            //            // Apply velocity
-            //            newPositions[i] = positions[i] + velocities[i];
-            //        }
-
-            //        positions = newPositions;
-            //    } while (!AreEqual(positions, originalPositions, axis) ||
-            //             !AreEqual(velocities, originalVelocities, axis));
-            //}
-
-            //return GetGCF(loop[0], GetGCF(loop[1], loop[2]));
-            return 0;
         }
 
         static long GetGCF(long a, long b)
