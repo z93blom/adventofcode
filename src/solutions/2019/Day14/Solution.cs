@@ -37,9 +37,10 @@ namespace AdventOfCode.Y2019.Day14 {
             }
 
             // Iterate all the reactions needed to go from FUEL to only ORE.
-            var chemsNeeded = new Dictionary<string, int>();
-            chemsNeeded.Add("FUEL", 1);
+            var fuelRequested = 1;
             var oreNeeded = 0;
+            var chemsNeeded = new Dictionary<string, int>();
+            chemsNeeded.Add("FUEL", fuelRequested);
             var extraChemicalsWeHave = new Dictionary<string, int>();
             while(chemsNeeded.Count > 0)
             {
@@ -137,7 +138,127 @@ namespace AdventOfCode.Y2019.Day14 {
         }
 
         object PartTwo(string input) {
-            return 0;
+            var data = input.Lines()
+                .Match(@"^(.*) => (\d+) (.*)$");
+
+            var reactions = new Dictionary<string, Reaction>();
+            foreach (var m in data)
+            {
+                var count = m.Groups.Count;
+                var result = new ChemAmount(m.Groups[count - 1].Value, int.Parse(m.Groups[count - 2].Value));
+                var chemAmounts = Regex.Matches(m.Groups[1].Value, @"(\d+) (\w+)")
+                    .Cast<Match>()
+                    .Select(m2 => m2.Groups.Cast<Group>().Skip(1).ToArray())
+                    .Select(g2 => new ChemAmount(g2[1].Value, int.Parse(g2[0].Value)));
+
+                var reaction = new Reaction(chemAmounts, result);
+                reactions.Add(reaction.Result.Chemical, reaction);
+            }
+
+
+
+            const long oneTrillion = 1_000_000_000_000L;
+
+            // First step up until we've passed the storage
+            long step = 2;
+            long fuelRequested = 1;
+            long oreNeeded;
+            do
+            {
+                oreNeeded = OreNeeded(reactions, fuelRequested);
+                if (oreNeeded < oneTrillion)
+                {
+                    fuelRequested = fuelRequested * step;
+                }
+            }
+            while(oreNeeded < oneTrillion);
+
+            // Then we need to step down until we hit the sweet spot.
+            var lower = fuelRequested / step;
+            var tooHigh = fuelRequested;
+            do
+            {
+                fuelRequested = (tooHigh + lower) / 2;
+                oreNeeded = OreNeeded(reactions, fuelRequested);
+                if (oreNeeded < oneTrillion)
+                {
+                    lower = fuelRequested;
+                }
+                else if (oreNeeded > oneTrillion)
+                {
+                    tooHigh = fuelRequested;
+                }
+                else
+                {
+                    lower = fuelRequested;
+                    tooHigh = fuelRequested + 1;
+                }
+            }
+            while(tooHigh - lower > 1);
+
+            return lower;
+        }
+
+        private long OreNeeded(Dictionary<string, Reaction> reactions, long fuelRequested)
+        {
+            var oreNeeded = 0L;
+            var chemsNeeded = new Dictionary<string, long>();
+            chemsNeeded.Add("FUEL", fuelRequested);
+            var extraChemicalsWeHave = new Dictionary<string, long>();
+            while(chemsNeeded.Count > 0)
+            {
+                // Take any chemical except ore to process.
+                var chemical = chemsNeeded.Keys.First();
+                var amountNeeded = chemsNeeded[chemical];
+
+                // Look up what it take to process it.
+                var reaction = reactions[chemical];
+
+                // How many times do we have to run the reaction to get the needed amount?
+                var timesToRunProcess = (long)Math.Ceiling((double)amountNeeded / reaction.Result.Amount);
+
+                // Add all the inputs to the list of chemicals needed.
+                foreach(var ca in reaction.Inputs)
+                {
+                    long inputsNeeded = ca.Amount * timesToRunProcess;
+
+                    // Do we have any leftovers from previous reactions?
+                    var leftOvers = extraChemicalsWeHave.ContainsKey(ca.Chemical) ? extraChemicalsWeHave[ca.Chemical] : 0;
+                    if (leftOvers >= inputsNeeded)
+                    {
+                        // There is more then enough of the leftovers so we do not have to process any more.
+                        extraChemicalsWeHave[ca.Chemical] = leftOvers - inputsNeeded;
+                        continue;
+                    }
+
+                    // There isn't enough of the leftovers. Let's take what we can, and process the rest.
+                    inputsNeeded -= leftOvers;
+                    extraChemicalsWeHave[ca.Chemical] = 0;
+
+                    if (ca.Chemical == "ORE")
+                    {
+                        oreNeeded += inputsNeeded;
+                    }
+                    else if (!chemsNeeded.ContainsKey(ca.Chemical))
+                    {
+                        chemsNeeded.Add(ca.Chemical, inputsNeeded);
+                    }
+                    else
+                    {
+                        chemsNeeded[ca.Chemical] = chemsNeeded[ca.Chemical] + inputsNeeded;
+                    }
+                }
+
+                // All the chemicals that are needed to process this chemical have been added.
+                // Remove the need to process this chemical.
+                chemsNeeded.Remove(reaction.Result.Chemical);
+
+                // Did we produce any extra chemicals?
+                var extrasProduced = timesToRunProcess * reaction.Result.Amount - amountNeeded;
+                extraChemicalsWeHave[reaction.Result.Chemical] = extraChemicalsWeHave.ContainsKey(reaction.Result.Chemical) ? extrasProduced + extraChemicalsWeHave[reaction.Result.Chemical] : extrasProduced;
+            }
+
+            return oreNeeded;     
         }
     }
 }
