@@ -41,5 +41,10 @@ namespace aoc.ConsoleApp
                 $"Year{moment.Year:0000}", 
                 $"Day{moment.Day:00}");
         }
+
+        public Fluent.IO.Path GetTemplateRoot()
+        {
+            return _applicationStartupDirectory.Combine("Templates");
+        }
     }
 }

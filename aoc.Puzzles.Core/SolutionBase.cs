@@ -6,7 +6,6 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-using aoc.Puzzles.Solutions;
 
 namespace aoc.Puzzles.Core
 {

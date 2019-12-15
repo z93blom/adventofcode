@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29609.76
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aoc.ConsoleApp", "aoc.ConsoleApp\aoc.ConsoleApp.csproj", "{8E800036-6FDF-4D4C-B604-33571F5E93D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aoc.ConsoleApp", "aoc.ConsoleApp\aoc.ConsoleApp.csproj", "{8E800036-6FDF-4D4C-B604-33571F5E93D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aoc.Puzzles", "aoc.Puzzles\aoc.Puzzles.csproj", "{B651E897-65C0-4E4A-ADE3-08A7ACF9838B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aoc.Puzzles", "aoc.Puzzles\aoc.Puzzles.csproj", "{B651E897-65C0-4E4A-ADE3-08A7ACF9838B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aoc.Puzzles.Test", "aoc.Puzzles.Test\aoc.Puzzles.Test.csproj", "{1CA81D32-6479-4F52-80F4-77D138DC6131}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aoc.Puzzles.Test", "aoc.Puzzles.Test\aoc.Puzzles.Test.csproj", "{1CA81D32-6479-4F52-80F4-77D138DC6131}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aoc.Puzzles.Core", "aoc.Puzzles.Core\aoc.Puzzles.Core.csproj", "{9085DDFD-33F7-4BB6-BE91-7F19C3ED3C6B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,9 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{8E800036-6FDF-4D4C-B604-33571F5E93D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -58,5 +57,23 @@ Global
 		{1CA81D32-6479-4F52-80F4-77D138DC6131}.Release|x64.Build.0 = Release|Any CPU
 		{1CA81D32-6479-4F52-80F4-77D138DC6131}.Release|x86.ActiveCfg = Release|Any CPU
 		{1CA81D32-6479-4F52-80F4-77D138DC6131}.Release|x86.Build.0 = Release|Any CPU
+		{9085DDFD-33F7-4BB6-BE91-7F19C3ED3C6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9085DDFD-33F7-4BB6-BE91-7F19C3ED3C6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9085DDFD-33F7-4BB6-BE91-7F19C3ED3C6B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9085DDFD-33F7-4BB6-BE91-7F19C3ED3C6B}.Debug|x64.Build.0 = Debug|Any CPU
+		{9085DDFD-33F7-4BB6-BE91-7F19C3ED3C6B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9085DDFD-33F7-4BB6-BE91-7F19C3ED3C6B}.Debug|x86.Build.0 = Debug|Any CPU
+		{9085DDFD-33F7-4BB6-BE91-7F19C3ED3C6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9085DDFD-33F7-4BB6-BE91-7F19C3ED3C6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9085DDFD-33F7-4BB6-BE91-7F19C3ED3C6B}.Release|x64.ActiveCfg = Release|Any CPU
+		{9085DDFD-33F7-4BB6-BE91-7F19C3ED3C6B}.Release|x64.Build.0 = Release|Any CPU
+		{9085DDFD-33F7-4BB6-BE91-7F19C3ED3C6B}.Release|x86.ActiveCfg = Release|Any CPU
+		{9085DDFD-33F7-4BB6-BE91-7F19C3ED3C6B}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E2ADAA07-E7FD-4781-8130-00FCB4FF72DA}
 	EndGlobalSection
 EndGlobal

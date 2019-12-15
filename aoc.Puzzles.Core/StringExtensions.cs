@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace aoc.Puzzles.Solutions
+namespace aoc.Puzzles.Core
 {
     public static class StringExtensions
     {

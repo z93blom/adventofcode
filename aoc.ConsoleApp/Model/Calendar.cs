@@ -6,7 +6,6 @@ using AngleSharp.Dom;
 
 namespace aoc.ConsoleApp.Model
 {
-
     public class CalendarToken
     {
         public string Text { get; set; }
@@ -38,7 +37,6 @@ namespace aoc.ConsoleApp.Model
                     outline: none;
                     cursor: default;
                 }}
-
                 .calendar .calendar-day {{ color: #666666; }}
                 .calendar a .calendar-day {{ color: #cccccc; }}
                 .calendar a .calendar-mark-complete,
@@ -64,6 +62,7 @@ namespace aoc.ConsoleApp.Model
             var lines = new List<List<CalendarToken>>();
             var line = new List<CalendarToken>();
             lines.Add(line);
+
 
             foreach (var textNode in GetText(calendar))
             {
@@ -140,18 +139,17 @@ namespace aoc.ConsoleApp.Model
 
         private static int ParseRgbaColor(string st)
         {
-            var regex = new Regex(@"rgba\((?<r>\d{1,3}), (?<g>\d{1,3}), (?<b>\d{1,3}), (?<a>\d{1,3})\)");
-            var match = regex.Match(st);
+            Regex regex = new Regex(@"rgba\((?<r>\d{1,3}), (?<g>\d{1,3}), (?<b>\d{1,3}), (?<a>\d{1,3})\)");
+            Match match = regex.Match(st);
             if (match.Success)
             {
-                var r = int.Parse(match.Groups["r"].Value);
-                var g = int.Parse(match.Groups["g"].Value);
-                var b = int.Parse(match.Groups["b"].Value);
+                int r = int.Parse(match.Groups["r"].Value);
+                int g = int.Parse(match.Groups["g"].Value);
+                int b = int.Parse(match.Groups["b"].Value);
 
                 return (r << 16) + (g << 8) + b;
             }
             return 0x888888;
         }
     }
-
 }

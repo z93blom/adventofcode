@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using AngleSharp;
 using AngleSharp.Io;
-using aoc.ConsoleApp.Generators;
 using aoc.ConsoleApp.Model;
 using aoc.Puzzles.Core;
 using Path = Fluent.IO.Path;
@@ -64,9 +63,20 @@ namespace aoc.ConsoleApp
         void UpdateSolutionTemplate(Problem problem)
         {
             var dir = _configuration.GetDir(new Moment(problem.Year, problem.Day));
+
             if (!dir.Exists || !dir.Files("Solution.cs", false).Any())
             {
-                dir.CreateFile("Solution.cs", SolutionTemplateGenerator.Generate(problem), Encoding.UTF8);
+                var template = _configuration.GetTemplateRoot().Files("Problem.template", false).First().Read(Encoding.UTF8);
+                
+                var st = new Antlr4.StringTemplate.Template(template);
+                st.Add("yearYYYY", $"{problem.Year:0000}");
+                st.Add("year", problem.Year);
+                st.Add("dayDD", $"{problem.Day:00}");
+                st.Add("day", problem.Day);
+                st.Add("title", $"{problem.Title}");
+
+                var content = st.Render();
+                dir.CreateFile("Solution.cs", content, Encoding.UTF8);
             }
         }
 
