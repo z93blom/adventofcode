@@ -14,5 +14,10 @@ namespace AdventOfCode
         public TVertex Target { get; }
 
         public Edge<TVertex> Reverse => new Edge<TVertex>(this.Target, this.Source);
+
+        public override string ToString()
+        {
+            return $"{Source} -> {Target}";
+        }
     }
 }

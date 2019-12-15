@@ -62,6 +62,20 @@ namespace AdventOfCode.Y2019
             } while (state != ProgramState.Finished && state != ProgramState.WaitingForInput);
         }
 
+        public long[] RunToNextInputOrFinishedCollectOutput()
+        {
+            _output.Clear();
+            ProgramState state;
+            do
+            {
+                state = ExecuteInstruction();
+            } while (state != ProgramState.Finished && state != ProgramState.WaitingForInput);
+
+            var o = _output.ToArray();
+            _output.Clear();
+            return o;
+        }
+
         public ProgramState ExecuteInstruction()
         {
             var opCode = GetOpCode();
