@@ -23,7 +23,8 @@ namespace AdventOfCode
                 try {
                     WriteLine(ConsoleColor.White, $"{solver.DayName()}: {solver.GetName()}");
                     WriteLine();
-                    foreach (var dir in new[] { workingDir, Path.Combine(workingDir, "test") }) {
+                    foreach (var dir in new[] { workingDir, Path.Combine(workingDir, "test"), Path.Combine(@"..\..\..\..\..", workingDir) }) 
+                    {
                         if (!Directory.Exists(dir)) {
                             continue;
                         }
