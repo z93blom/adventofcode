@@ -101,6 +101,9 @@ namespace AdventOfCode.Model
                 case "a":
                     yield return "[" + UnparseList("", node) + "](" + node.Attributes["href"].Value + ")";
                     break;
+                case "br":
+                    yield return "\n";
+                    break;
                 case "#text":
                     yield return HtmlEntity.DeEntitize(node.InnerText);
                     break;
