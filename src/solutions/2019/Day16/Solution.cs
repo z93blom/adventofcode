@@ -92,13 +92,7 @@ namespace AdventOfCode.Y2019.Day16 {
                 var newValues = new long[values.Length];
                 for (var index = 0; index < values.Length; index++)
                 {
-                    newValues[index] = values.Zip(patterns[index], (val, patternValue) => val * patternValue)
-                        .Sum()
-                        .ToString()
-                        .Reverse()
-                        .Take(1)
-                        .Select(c => long.Parse(c.ToString()))
-                        .First();
+                    newValues[index] = Math.Abs(values.Select((v, i) => v * GetPatternValue(startingPattern, index, i)).Sum()) % 10;
                 }
 
                 values = newValues;
@@ -123,39 +117,63 @@ namespace AdventOfCode.Y2019.Day16 {
         
         object PartTwo(string input)
         {
-
-            return 0;
             var startingPattern = new[] { 0, 1, 0, -1 };
-            var values = ToInts(input)
-                .Repeat(10000)
-                .ToArray();
+            var signal = ToInts(string.Join("", Enumerable.Repeat(input, 10000))).ToArray();
 
-            var offset = int.Parse(string.Join("", values.Take(7)));
-
-            // Get all the patterns (they will remain the same for all iterations
-            var patterns = new int[values.Length][];
-            for (var index = 0; index < values.Length; index++)
-            {
-                patterns[index] = GetPattern(startingPattern, index).Take(values.Length).ToArray();
-            }
+            var offset = int.Parse(string.Join("", signal.Take(7)));
 
             for (var iteration = 0; iteration < 100; iteration++)
             {
-                var newValues = new long[values.Length];
-                for (var index = 0; index < values.Length; index++)
+                var deconstruct = new long[signal.Length + 1];
+                for (var i = 0; i < signal.Length; i++)
                 {
-                    newValues[index] = values.Zip(patterns[index], (val, patternValue) => val * patternValue)
-                        .Sum().ToString()
-                        .Reverse()
-                        .Take(1)
-                        .Select(c => long.Parse(c.ToString()))
-                        .First();
+                    deconstruct[i + 1] = deconstruct[i] + signal[i];
                 }
 
-                values = newValues;
+                for (var i = 0; i < signal.Length; i++)
+                {
+                    var sum = 0L;
+                    var ln = i + 1;
+                    var pl = 0;
+                    for (var j = 0; j < signal.Length; j++)
+                    {
+                        var pos = (j + 1) * ln - 1;
+                        if (pos >= signal.Length)
+                        {
+                            sum += (deconstruct[signal.Length] - deconstruct[pl]) * startingPattern[j % 4];
+                            break;
+                        }
+                        else
+                        {
+                            sum += (deconstruct[pos] - deconstruct[pl]) * startingPattern[j % 4];
+                            pl = pos;
+                        }
+                    }
+
+                    if (sum < 0) {sum *= -1;}
+                    sum %= 10;
+                    signal[i] = sum;
+                }
+
+
+
+
+                //var newValues = new long[signal.Length];
+                //for (var index = 0; index < signal.Length; index++)
+                //{
+                //    // Use partial sums to calculate the value.
+                //    newValues[index] = signal.Select((v, i) => v * GetPatternValue(startingPattern, index, i)).Sum() % 10;
+                //}
+                //var index = 0;
+                //while (index < values.Length)
+                //{
+
+                //}
+
+                //signal = newValues;
             }
 
-            return string.Join("", values.Skip(offset).Take(8).Select(i => i.ToString()));
+            return string.Join("", signal.Skip(offset).Take(8).Select(i => i.ToString()));
         }
     }
 }
