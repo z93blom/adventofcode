@@ -74,5 +74,18 @@ namespace AdventOfCode
             }
 
             return dict;
-        }    }
+        }
+
+        public static IEnumerable<T> Repeat<T>(this IEnumerable<T> source, int count)
+        {
+            var array = source.ToArray();
+            for (var i = 0; i < count; i++)
+            {
+                foreach (var v in array)
+                {
+                    yield return v;
+                }
+            }
+        }
+    }
 }
