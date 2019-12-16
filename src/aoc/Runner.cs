@@ -36,10 +36,7 @@ namespace AdventOfCode
                             }
                             var refoutFile = file.Replace(".in", ".refout");
                             var refout = File.Exists(refoutFile) ? File.ReadAllLines(refoutFile) : null;
-                            var input = File.ReadAllText(file);
-                            if (input.EndsWith("\n")) {
-                                input = input.Substring(0, input.Length - 1);
-                            }
+                            var input = File.ReadAllText(file).TrimEnd();
                             var dt = DateTime.Now;
                             var iline = 0;
                             foreach (var line in solver.Solve(input)) {
