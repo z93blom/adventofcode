@@ -32,15 +32,26 @@ namespace aoc.ConsoleApp
         public Fluent.IO.Path GetDir(Moment moment)
         {
             return _applicationStartupDirectory.Combine(
-                "..", 
-                "..", 
-                "..", 
-                "..", 
-                "aoc.Puzzles", 
-                "Solutions", 
-                $"Year{moment.Year:0000}", 
-                $"Day{moment.Day:00}");
+                "..",
+                "..",
+                "..",
+                "..",
+                "aoc.Puzzles",
+                $"Year{moment.Year:0000}");
         }
+
+        public Fluent.IO.Path GetTestDir(Moment moment)
+        {
+            return _applicationStartupDirectory.Combine(
+                "..",
+                "..",
+                "..",
+                "..",
+                "aoc.Puzzles.Test",
+                $"Year{moment.Year:0000}");
+        }
+
+
 
         public Fluent.IO.Path GetTemplateRoot()
         {

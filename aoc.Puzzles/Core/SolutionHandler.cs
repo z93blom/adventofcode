@@ -43,7 +43,12 @@ namespace aoc.Puzzles.Core
             var instance = metadata.CreateInstance();
             instance.CancellationToken = cancellationToken;
 
-            var input = solutionDirectory.Files("input.txt", false).First().Read(Encoding.UTF8).Trim();
+            var input = solutionDirectory
+                .Combine("Input")
+                .Files($"Day{moment.Day:00}.txt", false)
+                .First()
+                .Read(Encoding.UTF8)
+                .Trim();
 
             await output.WriteLineAsync($"{moment}: {metadata.Title}");
             await SolvePart(1, input, output, instance.PartOne, cancellationToken);

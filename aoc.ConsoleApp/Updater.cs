@@ -24,7 +24,6 @@ namespace aoc.ConsoleApp
         public async Task Update(int year, int day)
         {
             Console.WriteLine($"Updating {year}/{day}");
-            Console.WriteLine($"  Using session cookie: {_configuration.SessionCookie}");
 
             var baseAddress = new Uri("https://adventofcode.com/");
             var context = BrowsingContext.New(AngleSharp.Configuration.Default
@@ -38,7 +37,8 @@ namespace aoc.ConsoleApp
             var calendar = await DownloadCalendar(context, baseAddress, year);
             var problem = await DownloadProblem(context, baseAddress, year, day);
 
-            UpdateSolutionTemplate(problem);
+            CreateSolutionTemplate(problem);
+            CreateTestTemplate(problem);
             UpdateInput(problem);
         }
 
@@ -60,14 +60,37 @@ namespace aoc.ConsoleApp
             return problem;
         }
 
-        void UpdateSolutionTemplate(Problem problem)
+        void CreateSolutionTemplate(Problem problem)
         {
-            var dir = _configuration.GetDir(new Moment(problem.Year, problem.Day));
+            CreateFileFromTemplate(
+                problem,
+                _configuration.GetDir(new Moment(problem.Year, problem.Day)),
+                "Problem.template",
+                $"Day{problem.Day:00}.cs");
+        }
 
-            if (!dir.Exists || !dir.Files("Solution.cs", false).Any())
+        void UpdateInput(Problem problem)
+        {
+            _configuration.GetDir(new Moment(problem.Year, problem.Day))
+                .Combine("Input")
+                .CreateFile($"Day{problem.Day:00}.txt", problem.Input, Encoding.UTF8);
+        }
+
+        void CreateTestTemplate(Problem problem)
+        {
+            CreateFileFromTemplate(
+                problem, 
+                _configuration.GetTestDir(new Moment(problem.Year, problem.Day)), 
+                "Test.template",
+                $"Day{problem.Day:00}.cs");
+        }
+
+        private void CreateFileFromTemplate(Problem problem, Path dir, string templateFileName, string fileName)
+        {
+            if (!dir.Exists || !dir.Files(fileName, false).Any())
             {
-                var template = _configuration.GetTemplateRoot().Files("Problem.template", false).First().Read(Encoding.UTF8);
-                
+                var template = _configuration.GetTemplateRoot().Files(templateFileName, false).First().Read(Encoding.UTF8);
+
                 var st = new Antlr4.StringTemplate.Template(template);
                 st.Add("yearYYYY", $"{problem.Year:0000}");
                 st.Add("year", problem.Year);
@@ -76,15 +99,8 @@ namespace aoc.ConsoleApp
                 st.Add("title", $"{problem.Title}");
 
                 var content = st.Render();
-                dir.CreateFile("Solution.cs", content, Encoding.UTF8);
+                dir.CreateFile(fileName, content, Encoding.UTF8);
             }
         }
-
-        void UpdateInput(Problem problem)
-        {
-            _configuration.GetDir(new Moment(problem.Year, problem.Day))
-                .CreateFile("input.txt", problem.Input, Encoding.UTF8);
-        }
-
     }
 }

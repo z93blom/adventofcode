@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 using aoc.Puzzles.Core;
 #pragma warning disable 1998 // Async method lacks await operators.
                  
-namespace aoc.Puzzles.Solutions.Year<yearYYYY>.Day<dayDD>
+namespace aoc.Puzzles.Year<yearYYYY>
 {
     [Puzzle("<title>", <year>, <day>)]
-    class Solution : SolutionBase
+    public sealed class Day<dayDD> : SolutionBase
     {
         public override async Task\<object> PartOne(string input, ChannelWriter\<string> output)
         {

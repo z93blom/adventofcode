@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using aoc.Puzzles.Core;
 using Fluent.IO;
-using Microsoft.VisualBasic;
 
 namespace aoc.ConsoleApp
 {
