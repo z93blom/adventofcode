@@ -5,11 +5,9 @@ VisualStudioVersion = 16.0.29609.76
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aoc.ConsoleApp", "aoc.ConsoleApp\aoc.ConsoleApp.csproj", "{8E800036-6FDF-4D4C-B604-33571F5E93D0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aoc.Puzzles", "aoc.Puzzles\aoc.Puzzles.csproj", "{B651E897-65C0-4E4A-ADE3-08A7ACF9838B}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aoc.Puzzles.Test", "aoc.Puzzles.Test\aoc.Puzzles.Test.csproj", "{1CA81D32-6479-4F52-80F4-77D138DC6131}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aoc.Puzzles.Core", "aoc.Puzzles.Core\aoc.Puzzles.Core.csproj", "{9085DDFD-33F7-4BB6-BE91-7F19C3ED3C6B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aoc.Puzzles", "aoc.Puzzles\aoc.Puzzles.csproj", "{9085DDFD-33F7-4BB6-BE91-7F19C3ED3C6B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,18 +31,6 @@ Global
 		{8E800036-6FDF-4D4C-B604-33571F5E93D0}.Release|x64.Build.0 = Release|Any CPU
 		{8E800036-6FDF-4D4C-B604-33571F5E93D0}.Release|x86.ActiveCfg = Release|Any CPU
 		{8E800036-6FDF-4D4C-B604-33571F5E93D0}.Release|x86.Build.0 = Release|Any CPU
-		{B651E897-65C0-4E4A-ADE3-08A7ACF9838B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B651E897-65C0-4E4A-ADE3-08A7ACF9838B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B651E897-65C0-4E4A-ADE3-08A7ACF9838B}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{B651E897-65C0-4E4A-ADE3-08A7ACF9838B}.Debug|x64.Build.0 = Debug|Any CPU
-		{B651E897-65C0-4E4A-ADE3-08A7ACF9838B}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B651E897-65C0-4E4A-ADE3-08A7ACF9838B}.Debug|x86.Build.0 = Debug|Any CPU
-		{B651E897-65C0-4E4A-ADE3-08A7ACF9838B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B651E897-65C0-4E4A-ADE3-08A7ACF9838B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B651E897-65C0-4E4A-ADE3-08A7ACF9838B}.Release|x64.ActiveCfg = Release|Any CPU
-		{B651E897-65C0-4E4A-ADE3-08A7ACF9838B}.Release|x64.Build.0 = Release|Any CPU
-		{B651E897-65C0-4E4A-ADE3-08A7ACF9838B}.Release|x86.ActiveCfg = Release|Any CPU
-		{B651E897-65C0-4E4A-ADE3-08A7ACF9838B}.Release|x86.Build.0 = Release|Any CPU
 		{1CA81D32-6479-4F52-80F4-77D138DC6131}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1CA81D32-6479-4F52-80F4-77D138DC6131}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CA81D32-6479-4F52-80F4-77D138DC6131}.Debug|x64.ActiveCfg = Debug|Any CPU
