@@ -23,7 +23,8 @@ namespace aoc.ConsoleApp
 
         public async Task Update(int year, int day)
         {
-            Console.WriteLine($"Updating {year}/{day}");
+            var moment = new Moment(year, day);
+            Console.WriteLine($"Updating {moment}");
 
             var baseAddress = new Uri("https://adventofcode.com/");
             var context = BrowsingContext.New(AngleSharp.Configuration.Default
@@ -34,7 +35,7 @@ namespace aoc.ConsoleApp
 
             context.SetCookie(new Url(baseAddress.ToString()), "session=" + _configuration.SessionCookie);
 
-            var calendar = await DownloadCalendar(context, baseAddress, year);
+            //var calendar = await DownloadCalendar(context, baseAddress, year);
             var problem = await DownloadProblem(context, baseAddress, year, day);
 
             CreateSolutionTemplate(problem);

@@ -15,7 +15,7 @@ namespace aoc.Puzzles.Core
 
         public override string ToString()
         {
-            return $"{Year:0000}-{Day:00}";
+            return $"{Year:0000}/{Day:00}";
         }
 
         public int CompareTo(Moment other)

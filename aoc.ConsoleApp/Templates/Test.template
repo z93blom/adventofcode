@@ -11,22 +11,24 @@ using System.Threading.Tasks;
 using Xunit;
 using FluentAssertions;
 using aoc.Puzzles.Core;
-using aoc.Puzzles.Year<yearYYYY>
+using aoc.Puzzles.Year<yearYYYY>;
 
 namespace aoc.Puzzles.Test.Year<yearYYYY>
 {
     public sealed class Day<dayDD>Test : TestBase\<Day<dayDD>>
     {
-        [Fact]
-        public async Task Part1()
+        [Theory]
+        [InlineData("", 0)]
+        public async Task PartOne(string input, object expected)
         {
-            (await Solution.PartOne("", Writer)).Should().BeEquivalentTo("");
+            (await Solution.PartOne(input, Writer)).Should().BeEquivalentTo(expected);
         }
 
-        [Fact]
-        public async Task Part2()
+        [Theory]
+        [InlineData("", 0)]
+        public async Task PartTwo(string input, object expected)
         {
-            (await Solution.PartTwo("", Writer)).Should().BeEquivalentTo("");
+            (await Solution.PartTwo(input, Writer)).Should().BeEquivalentTo(expected);
         }
     }
 }
