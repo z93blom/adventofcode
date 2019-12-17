@@ -45,7 +45,13 @@ namespace aoc.ConsoleApp
                 {
                     return async config =>
                     {
-                        var moment = solutionHandler.Moments.OrderByDescending(m => m).First();
+                        var moment = solutionHandler.Moments.OrderByDescending(m => m).FirstOrDefault();
+                        if (moment.Equals(default(Moment)))
+                        {
+                            await Console.Out.WriteLineAsync("No puzzles found.");
+                            return;
+                        }
+                        
                         await solutionHandler.Solve(moment,
                             configuration.GetDir(moment),
                             Console.Out, 
