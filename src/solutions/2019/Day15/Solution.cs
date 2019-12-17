@@ -365,6 +365,23 @@ namespace AdventOfCode.Y2019.Day15 {
         {
             return $"({X}, {Y})";
         }
+
+        public Point GetPoint(Direction direction)
+        {
+            switch (direction)
+            {
+                case Direction.North:
+                    return new Point(X, Y - 1);
+                case Direction.South:
+                    return new Point(X, Y + 1);
+                case Direction.West:
+                    return new Point(X - 1, Y);
+                case Direction.East:
+                    return new Point(X + 1, Y);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(direction), direction, null);
+            }
+        }
     }
 
     enum Direction
