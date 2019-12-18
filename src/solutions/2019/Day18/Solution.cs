@@ -19,43 +19,194 @@ namespace AdventOfCode.Y2019.Day18 {
 
         public string GetName() => "Many-Worlds Interpretation";
 
+        Direction[] _allDirections;
+
+        Point _startingLocation;
+        Dictionary<Point, char> _keys;
+        Dictionary<Point, char> _doors;
+        HashSet<Point> _map;
+        Dictionary<char, Area> _areas;
+
         public IEnumerable<object> Solve(string input) {
+
+            _allDirections = Enum.GetValues(typeof(Direction)).Cast<Direction>().ToArray();
+            CreateMap(input, out _map, out _startingLocation, out _keys, out _doors);
+            _areas = GetAreas();
+
             yield return PartOne(input);
             yield return PartTwo(input);
         }
 
-        object PartOne(string input) {
-            CreateMap(input, out var map, out var startingLocation, out var keys, out var doors);
+        struct Area
+        {
+            public char IncomingDoor { get; }
+            public Point[] OutgoingDoors { get; }
+            public Point[] Keys { get; }
+            public HashSet<Point> Points { get; }
 
-            var graph = BuildGraph(map);
-            var keyLocations = new Dictionary<char, Point>();
-            foreach (var kvp in keys)
+            public Area(char incomingDoor, IEnumerable<Point> points, Dictionary<Point, char> keys, Dictionary<Point, char> doors)
             {
-                keyLocations.Add(kvp.Value, kvp.Key);
+                IncomingDoor = incomingDoor;
+                Points = new HashSet<Point>(points);
+                OutgoingDoors = Points.Where(p => doors.ContainsKey(p)).ToArray();
+                Keys = Points.Where(p => keys.ContainsKey(p)).ToArray();
             }
 
-            var possiblePaths = new List<List<char>>();
-            GetPaths(new List<char>(), startingLocation, graph, keys, doors, possiblePaths);
-
-            var distances = new Dictionary<List<char>, int>();
-
-            // Order them by how far we have to travel to collect all the keys in the order specified.
-            foreach (var possiblePath in possiblePaths)
+            public Area(char incomingDoor, Point doorLocation, IEnumerable<Point> points, Dictionary<Point, char> keys, Dictionary<Point, char> doors)
             {
-                var currentLocation = startingLocation;
-                var totalDistance = 0;
-                foreach (var key in possiblePath)
-                {
-                    totalDistance += Distance(currentLocation, keyLocations[key], graph);
-                    currentLocation = keyLocations[key];
-                }
-
-                distances[possiblePath] = totalDistance;
+                IncomingDoor = incomingDoor;
+                Points = new HashSet<Point>(points);
+                OutgoingDoors = Points.Where(p => doors.ContainsKey(p) && p != doorLocation).ToArray();
+                Keys = Points.Where(p => keys.ContainsKey(p)).ToArray();
             }
 
-            return distances.Min(kvp => kvp.Value);
         }
 
+
+
+        object PartOne(string input) {
+
+            return 0;
+        }
+
+        Dictionary<char, Area> GetAreas()
+        {
+            var areas = new Dictionary<char, Area>();
+            var startingArea = new Area('@', ReachablePoints(_startingLocation), _keys, _doors);
+            areas.Add(startingArea.IncomingDoor, startingArea);
+            var coveredPoints = new HashSet<Point>(startingArea.Points);
+
+            var areasToCheck = new Queue<Area>();
+            areasToCheck.Enqueue(startingArea);
+            while (areasToCheck.Count > 0)
+            {
+                var area = areasToCheck.Dequeue();
+                // Get all the areas on the other side of this area.
+                foreach (var doorPoint in area.OutgoingDoors)
+                {
+                    var door = _doors[doorPoint];
+                    foreach (var p in _allDirections.Select(dir => doorPoint.GetPoint(dir)).Where(p => !coveredPoints.Contains(p) && _map.Contains(p)))
+                    {
+                        // p is an uncovered point that is on the map.
+                        var newArea = new Area(door, doorPoint, ReachablePoints(p), _keys, _doors);
+
+                        if (newArea.Points.Count > 0)
+                        {
+
+                            foreach (var point in newArea.Points)
+                            {
+                                coveredPoints.Add(point);
+                            }
+
+                            if (newArea.Keys.Any() || newArea.OutgoingDoors.Any())
+                            {
+                                // We should only have a single area behind a door. (Otherwise .Add will fail).
+                                areas.Add(newArea.IncomingDoor, newArea);
+                            }
+
+                            if (newArea.OutgoingDoors.Any())
+                            {
+                                areasToCheck.Enqueue(newArea);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return areas;
+        }
+
+        public BidirectionalGraph<Point, Edge<Point>> BuildDoorGraph(Point location)
+        {
+            var graph = new BidirectionalGraph<Point, Edge<Point>>();
+            var keysUnlocked = new Dictionary<char, List<char>>();
+
+            var reachablePoints = ReachablePoints(location).ToArray();
+            var doorsReachable = reachablePoints.Where(p => _doors.ContainsKey(p)).ToArray();
+            foreach(var source in doorsReachable)
+            {
+                // Connect them together.
+                foreach (var target in doorsReachable)
+                {
+                    if (source != target)
+                    {
+                        if (!graph.ContainsVertex(source))
+                        {
+                            graph.AddVertex(source);
+                        }
+
+                        if (!graph.ContainsVertex(target))
+                        {
+                            graph.AddVertex(target);
+                        }
+
+                        graph.AddEdge(new Edge<Point>(source, target));
+                    }
+                }
+            }
+
+            return graph;
+        }
+
+        private IEnumerable<Point> ReachablePoints(Point location)
+        {
+            var pointsToCheck = new Queue<Point>();
+            var pointsVisited = new HashSet<Point>();
+            pointsToCheck.Enqueue(location);
+            pointsVisited.Add(location);
+            while (pointsToCheck.Count > 0)
+            {
+                var source = pointsToCheck.Dequeue();
+                foreach (var dir in _allDirections)
+                {
+                    // Is there a location on the map in this direction?
+                    var target = source.GetPoint(dir);
+                    if (_map.Contains(target) && !pointsVisited.Contains(target))
+                    {
+                        yield return target;
+                        // Is it a door?
+                        if (!_doors.ContainsKey(target))
+                        {
+                            pointsToCheck.Enqueue(target);
+                        }
+
+                        pointsVisited.Add(target);
+                    }
+                }
+            }
+        }
+
+        private BidirectionalGraph<Point, Edge<Point>> BuildGraph(HashSet<Point> map, char[] keys, Dictionary<Point, char> doors, Point startingLocation)
+        {
+            var graph = new BidirectionalGraph<Point, Edge<Point>>();
+            graph.AddVertex(startingLocation);
+            var pointsToCheck = new Queue<Point>();
+            pointsToCheck.Enqueue(startingLocation);
+            while (pointsToCheck.Count > 0)
+            {
+                var source = pointsToCheck.Dequeue();
+                foreach (var dir in _allDirections)
+                {
+                    // Is there a location on the map in this direction?
+                    var target = source.GetPoint(dir);
+                    if (map.Contains(target) && ! graph.ContainsVertex(target))
+                    {
+                        // Valid point that we can move to.
+                        graph.AddVertex(target);
+                        graph.AddEdge(new Edge<Point>(source, target));
+                        graph.AddEdge(new Edge<Point>(target, source));
+
+                        // Can we continue past this location?
+                        if (!doors.ContainsKey(target) || keys.Contains(doors[target]))
+                        {
+                            pointsToCheck.Enqueue(target);
+                        }
+                    }
+                }
+            }
+
+            return graph;
+        }
 
         object PartTwo(string input) {
             return 0;
