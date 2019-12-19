@@ -27,6 +27,8 @@ namespace AdventOfCode.Y2019.Day18 {
         HashSet<Point> _map;
         Dictionary<char, Area> _areas;
 
+        Quadrant[] _quadrants = Enum.GetValues(typeof(Quadrant)).Cast<Quadrant>().ToArray();
+
         public IEnumerable<object> Solve(string input) {
 
             _allDirections = Enum.GetValues(typeof(Direction)).Cast<Direction>().ToArray();
@@ -62,11 +64,78 @@ namespace AdventOfCode.Y2019.Day18 {
 
         }
 
+        enum Quadrant
+        {
+            NorthWest,
+            NorthEast,
+            SouthEast,
+            SouthWest
+        }
 
+        object PartOne(string input) 
+        {
+            // Is there any quadrant we can solve with just the keys available at the start and the keys in that quadrant?
+            var areaToQuadrantMap = new Dictionary<Area, Quadrant>();
+            var lockedKeysPerQuadrant = _quadrants.ToDictionary(q => q, q => new List<char>());
+            var doorsNeededPerQuadrant = _quadrants.ToDictionary(q => q, q => new List<char>());
+            foreach (var area in _areas.Values.Except(Enumerable.Repeat(_areas['@'], 1)))
+            {
+                var point = area.Points.First();
+                Quadrant quadrant;
+                if (point.X < _startingLocation.X && point.Y < _startingLocation.Y)
+                {
+                    quadrant = Quadrant.NorthWest;
+                }
+                else if (point.X > _startingLocation.X && point.Y < _startingLocation.Y)
+                {
+                    quadrant = Quadrant.NorthEast;
+                }
+                else if (point.X > _startingLocation.X && point.Y > _startingLocation.Y)
+                {
+                    quadrant = Quadrant.SouthEast;
+                }
+                else 
+                {
+                    quadrant = Quadrant.SouthWest;
+                }
 
-        object PartOne(string input) {
+                areaToQuadrantMap[area] = quadrant;
+                lockedKeysPerQuadrant[quadrant].AddRange(area.Keys.Select(p => _keys[p]));
+                doorsNeededPerQuadrant[quadrant].Add(area.IncomingDoor);
+
+            }
+            
+            var keysAvailableAtStart = _areas['@'].Keys.Select(p => _keys[p]).ToArray();
+
+            var keysAvailableToEachQuadrant = _quadrants.ToDictionary(q => q, q => new List<char>(lockedKeysPerQuadrant[q].Concat(keysAvailableAtStart)));
+
+            var solvableQuadrants = _quadrants.Where(q => doorsNeededPerQuadrant[q].All(c => keysAvailableToEachQuadrant[q].Contains(c))).ToArray();
+
+            //Well, that didn't solve anything.
+
+            // Let's see if we can figure out something based on the doors instead.
+            var keysBehindDoors = _areas.Keys
+                .Except(Enumerable.Repeat('@', 1))
+                .Select(c => _areas[c])
+                .ToDictionary(a => a.IncomingDoor, a => GetLockedKeys(a).ToArray());
 
             return 0;
+        }
+
+        private IEnumerable<char> GetLockedKeys(Area lockedArea)
+        {
+            foreach (var outgoingDoor in lockedArea.OutgoingDoors.Select(p => _doors[p]).Where(c => _areas.ContainsKey(c)))
+            {
+                foreach(var key in GetLockedKeys(_areas[outgoingDoor]))
+                {
+                    yield return key;
+                }
+            }
+
+            foreach(var k in lockedArea.Keys.Select(p => _keys[p]))
+            {
+                yield return k;
+            }
         }
 
         Dictionary<char, Area> GetAreas()
