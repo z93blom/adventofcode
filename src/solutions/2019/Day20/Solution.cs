@@ -36,8 +36,24 @@ namespace AdventOfCode.Y2019.Day20 {
             yield return PartTwo(input);
         }
 
+        struct Portal
+        {
+            public string Name { get; }
+            public Point PortalLocation { get; }
+            public Point MapLocation { get; }
+
+            public Portal(string name, Point portalLocation, Point mapLocation)
+            {
+                Name = name;
+                PortalLocation = portalLocation;
+                MapLocation = mapLocation;
+            }
+        }
+
         private void CreateGraph()
         {
+            _graph.Clear();
+
             // Add all "normal" points to the graph.
             var standardPoints = new HashSet<Point>(_map.Where(kvp => kvp.Value == '.').Select(kvp => kvp.Key));
             foreach (var standardPoint in standardPoints)
@@ -57,13 +73,10 @@ namespace AdventOfCode.Y2019.Day20 {
 
 
             // Get all the portal locations.
-            var portals = new Dictionary<Point, Point>();
+            //var portals = new HashSet<Portal>();
+            var unconnectedPortals = new Dictionary<string, Portal>();
+
             var textLocations = new HashSet<Point>(_map.Where(kvp => kvp.Value != '.').Select(kvp => kvp.Key));
-
-            var pointConnectedToPortal = new Dictionary<string, Point[]>();
-
-            var unconnectedPortals = new Dictionary<string, Point>();
-
             while (textLocations.Count > 0)
             {
                 var point = textLocations.First();
@@ -97,48 +110,52 @@ namespace AdventOfCode.Y2019.Day20 {
 
                 // The text is "normalized" (so we can find the accompanying portal).
                 // What is the location of the portal? It depends on where the only adjacent '.' is to the portal.
-                var pointAdjacentToMap = new[] {point, adjacent.Point}
-                    .SelectMany(p => _allDirections.Select(d => new { PortalPoint = p, MapPoint = p.GetPoint(d)}))
+                var pointsAdjacentToMap = new[] {point, adjacent.Point}
+                    .SelectMany(p => _allDirections.Select(d => new {PortalPoint = p, MapPoint = p.GetPoint(d)}))
                     .Where(a => _map.ContainsKey(a.MapPoint) && _map[a.MapPoint] == '.')
-                    .First();
+                    .ToArray();
+                //.First();
+
+                var pointAdjacentToMap = pointsAdjacentToMap[0];
+
+                var portal = new Portal(portalName, pointAdjacentToMap.PortalPoint, pointAdjacentToMap.MapPoint);
 
                 // Connect it to the map.
-                _graph.AddVertex(pointAdjacentToMap.PortalPoint);
-                var edge = new Edge<Point>(pointAdjacentToMap.PortalPoint, pointAdjacentToMap.MapPoint);
-                _graph.AddEdge(edge);
-                _graph.AddEdge(edge.Reverse);
+                //_graph.AddVertex(pointAdjacentToMap.PortalPoint);
+                //var edge = new Edge<Point>(pointAdjacentToMap.MapPoint, pointAdjacentToMap.PortalPoint);
+                //_graph.AddEdge(edge);
 
-                if (unconnectedPortals.ContainsKey(portalName))
+                if (unconnectedPortals.ContainsKey(portal.Name))
                 {
                     // The other portal has already been found.
-                    var otherPortalLocation = unconnectedPortals[portalName];
-                    _graph.AddVertex(pointAdjacentToMap.PortalPoint);
-                    var portalEdge = new Edge<Point>(pointAdjacentToMap.PortalPoint, otherPortalLocation);
-                    _graph.AddEdge(portalEdge);
-                    _graph.AddEdge(portalEdge.Reverse);
+                    // Connect them both to the map. Note that the portal is connected to the connected point (not to the other portal).
+                    var otherPortal = unconnectedPortals[portalName];
+                    var edge = new Edge<Point>(portal.MapLocation, otherPortal.MapLocation);
+                    _graph.AddEdge(edge);
+                    _graph.AddEdge(edge.Reverse);
 
-                    portals.Add(pointAdjacentToMap.PortalPoint, otherPortalLocation);
-                    portals.Add(otherPortalLocation, pointAdjacentToMap.PortalPoint);
+                    //portals.Add(portal);
                     unconnectedPortals.Remove(portalName);
                 }
                 else
                 {
                     // Not found.
-                    unconnectedPortals[portalName] = pointAdjacentToMap.PortalPoint;
+                    unconnectedPortals[portalName] = portal;
                 }
             }
 
             // We should have two "unconnected" portals: AA && ZZ (meaning the starting location and goal).
-            _startingLocation = unconnectedPortals["AA"];
-            _goal = unconnectedPortals["ZZ"];
+            _startingLocation = unconnectedPortals["AA"].MapLocation;
+            _goal = unconnectedPortals["ZZ"].MapLocation;
         }
 
         private void CreateMap(string input)
         {
-            var y = 0;
+            _map.Clear();
+            var y = 1;
             foreach (var line in input.Lines())
             {
-                var x = 0;
+                var x = 1;
                 foreach (var c in line)
                 {
                     if (c == '.' || (c >= 'A' && c <= 'Z'))
