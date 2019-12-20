@@ -19,7 +19,7 @@ namespace AdventOfCode.Y2019.Day20 {
         private readonly BidirectionalGraph<Point, Edge<Point>> _graph = new BidirectionalGraph<Point, Edge<Point>>();
         private Point _startingLocation;
         private Point _goal;
-        const int levelOffset = 100;
+        const int levelOffset = 200;
 
         readonly Direction[] _allDirections;
 
@@ -59,19 +59,40 @@ namespace AdventOfCode.Y2019.Day20 {
             // Add all "normal" points to the graph.
             AddAllNormalPoints(_graph, 0);
 
-
             // Get all the portal locations.
-            //var portals = new HashSet<Portal>();
-            var unconnectedPortals = new Dictionary<string, Portal>();
+            var portals = GetPortals().GroupBy(p => p.Name);
 
+            foreach(var portalPair in portals.Where(g => g.Count() == 2))
+            {
+                var pair = portalPair.ToArray();
+
+                var portal = portalPair.First();
+                var otherPortal = portalPair.Skip(1).First();
+                var edge = new Edge<Point>(portal.MapLocation, otherPortal.MapLocation);
+                _graph.AddEdge(edge);
+                _graph.AddEdge(edge.Reverse);
+            }
+
+            _startingLocation = portals.First(p => p.Key == "AA").First().MapLocation;
+            _goal = portals.First(p => p.Key == "ZZ").First().MapLocation;
+        }
+
+        private HashSet<Portal> GetPortals()
+        {
+            var minX = _map.Min(kvp => kvp.Key.X);
+            var maxX = _map.Max(kvp => kvp.Key.X);
+            var minY = _map.Min(kvp => kvp.Key.Y);
+            var maxY = _map.Max(kvp => kvp.Key.Y);
+
+            var portals = new HashSet<Portal>();
             var textLocations = new HashSet<Point>(_map.Where(kvp => kvp.Value != '.').Select(kvp => kvp.Key));
             while (textLocations.Count > 0)
             {
                 var point = textLocations.First();
                 var adjacent = _allDirections
-                    .Select(d => new {Point = point.GetPoint(d), Direction = d})
+                    .Select(d => new { Point = point.GetPoint(d), Direction = d })
                     .Where(a => _map.ContainsKey(a.Point) && _map[a.Point] != '.')
-                    .Select(a => new {a.Point, a.Direction, Type = _map[a.Point]})
+                    .Select(a => new { a.Point, a.Direction, Type = _map[a.Point] })
                     .First();
 
                 textLocations.Remove(point);
@@ -98,51 +119,31 @@ namespace AdventOfCode.Y2019.Day20 {
 
                 // The text is "normalized" (so we can find the accompanying portal).
                 // What is the location of the portal? It depends on where the only adjacent '.' is to the portal.
-                var pointAdjacentToMap = new[] {point, adjacent.Point}
-                    .SelectMany(p => _allDirections.Select(d => new {PortalPoint = p, MapPoint = p.GetPoint(d)}))
+                var pointAdjacentToMap = new[] { point, adjacent.Point }
+                    .SelectMany(p => _allDirections.Select(d => new { PortalPoint = p, MapPoint = p.GetPoint(d) }))
                     .Where(a => _map.ContainsKey(a.MapPoint) && _map[a.MapPoint] == '.')
                     .ToArray()
                     .First();
 
-                var isOuter = true;
+                var isOuter = pointAdjacentToMap.PortalPoint.X == minX + 1
+                    || pointAdjacentToMap.PortalPoint.X == maxX - 1
+                    || pointAdjacentToMap.PortalPoint.Y == minY + 1
+                    || pointAdjacentToMap.PortalPoint.Y == maxY - 1;
 
                 var portal = new Portal(portalName, pointAdjacentToMap.PortalPoint, pointAdjacentToMap.MapPoint, isOuter);
-
-                // Connect it to the map.
-                //_graph.AddVertex(pointAdjacentToMap.PortalPoint);
-                //var edge = new Edge<Point>(pointAdjacentToMap.MapPoint, pointAdjacentToMap.PortalPoint);
-                //_graph.AddEdge(edge);
-
-                if (unconnectedPortals.ContainsKey(portal.Name))
-                {
-                    // The other portal has already been found.
-                    // Connect them both to the map. Note that the portal is connected to the connected point (not to the other portal).
-                    var otherPortal = unconnectedPortals[portalName];
-                    var edge = new Edge<Point>(portal.MapLocation, otherPortal.MapLocation);
-                    _graph.AddEdge(edge);
-                    _graph.AddEdge(edge.Reverse);
-
-                    //portals.Add(portal);
-                    unconnectedPortals.Remove(portalName);
-                }
-                else
-                {
-                    // Not found.
-                    unconnectedPortals[portalName] = portal;
-                }
+                portals.Add(portal);
             }
 
-            // We should have two "unconnected" portals: AA && ZZ (meaning the starting location and goal).
-            _startingLocation = unconnectedPortals["AA"].MapLocation;
-            _goal = unconnectedPortals["ZZ"].MapLocation;
+            return portals;
         }
 
         private void AddAllNormalPoints(BidirectionalGraph<Point, Edge<Point>> graph, int level)
         {
-            var standardPoints = new HashSet<Point>(_map.Where(kvp => kvp.Value == '.').Select(kvp => kvp.Key));
+            var standardPoints = new HashSet<Point>(_map.Where(kvp => kvp.Value == '.')
+                .Select(kvp => GetPointForLevel(kvp.Key, level)));
             foreach (var standardPoint in standardPoints)
             {
-                graph.AddVertex(new Point(level * levelOffset + standardPoint.X, level * levelOffset + standardPoint.Y));
+                graph.AddVertex(standardPoint);
             }
 
             foreach (var standardPoint in standardPoints)
@@ -154,6 +155,11 @@ namespace AdventOfCode.Y2019.Day20 {
                     graph.AddEdge(edge);
                 }
             }
+        }
+
+        private static Point GetPointForLevel(Point point, int level)
+        {
+            return new Point(level * levelOffset + point.X, level * levelOffset + point.Y);
         }
 
         private void CreateMap(string input)
@@ -190,9 +196,68 @@ namespace AdventOfCode.Y2019.Day20 {
             return path.Count();
         }
 
-        object PartTwo(string input) {
-            
-            return 0;
+        object PartTwo(string input) 
+        {
+            var portals = GetPortals();
+
+            Portal startingPortal = portals.First(p => p.Name == "AA");
+            _startingLocation = startingPortal.MapLocation;
+            portals.Remove(startingPortal);
+
+            Portal goalPortal = portals.First(p => p.Name == "ZZ");
+            _goal = goalPortal.MapLocation;
+            portals.Remove(goalPortal);
+
+            _graph.Clear();
+            var level = 0;
+            while (true)
+            {
+                AddAllNormalPoints(_graph, level);
+                AddPortalsForLevel(_graph, portals, level);
+
+                var pathing = _graph.ShortestPathsDijkstra(e => 1, _startingLocation);
+                if (pathing(_goal, out var path))
+                {
+                    return path.Count();
+                }
+
+                level++;
+            }
+        }   
+
+        private void AddPortalsForLevel(BidirectionalGraph<Point, Edge<Point>> graph, HashSet<Portal> portals, int level)
+        {
+            foreach (var portalPair in portals.GroupBy(p => p.Name).Where(g => g.Count() == 2))
+            {
+                var pair = portalPair.ToArray();
+
+                var outerPortal = portalPair.First(p => p.IsOuter);
+                var innerPortal = portalPair.First(p => !p.IsOuter);
+
+                // Connect the inner portal to the next level and the outer portal to to previous level.
+
+                // Connect the inner portal at the level above this level to the outer portal at this level.
+                var innerPortalSource = GetPointForLevel(innerPortal.MapLocation, level - 1);
+                var innerPortalTarget = GetPointForLevel(outerPortal.MapLocation, level);
+
+                if (graph.ContainsVertex(innerPortalSource) && graph.ContainsVertex(innerPortalTarget))
+                {
+                    var edge = new Edge<Point>(innerPortalSource, innerPortalTarget);
+                    graph.AddEdge(edge);
+                    graph.AddEdge(edge.Reverse);
+                }
+
+                // Connect the outer portal at this level to the inner portal at the level below this.
+                var outerPortalSource = GetPointForLevel(outerPortal.MapLocation, level);
+                var outerPortalTarget = GetPointForLevel(innerPortal.MapLocation, level + 1);
+
+                if (graph.ContainsVertex(outerPortalSource) && graph.ContainsVertex(outerPortalTarget))
+                {
+                    var edge = new Edge<Point>(outerPortalSource, outerPortalTarget);
+                    graph.AddEdge(edge);
+                    graph.AddEdge(edge.Reverse);
+                }
+            }
         }
     }
 }
