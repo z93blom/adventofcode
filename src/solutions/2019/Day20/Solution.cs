@@ -19,6 +19,7 @@ namespace AdventOfCode.Y2019.Day20 {
         private readonly BidirectionalGraph<Point, Edge<Point>> _graph = new BidirectionalGraph<Point, Edge<Point>>();
         private Point _startingLocation;
         private Point _goal;
+        const int levelOffset = 100;
 
         readonly Direction[] _allDirections;
 
@@ -30,7 +31,6 @@ namespace AdventOfCode.Y2019.Day20 {
         public IEnumerable<object> Solve(string input)
         {
             CreateMap(input);
-            CreateGraph();
 
             yield return PartOne(input);
             yield return PartTwo(input);
@@ -41,12 +41,14 @@ namespace AdventOfCode.Y2019.Day20 {
             public string Name { get; }
             public Point PortalLocation { get; }
             public Point MapLocation { get; }
+            public bool IsOuter { get; }
 
-            public Portal(string name, Point portalLocation, Point mapLocation)
+            public Portal(string name, Point portalLocation, Point mapLocation, bool isOuter)
             {
                 Name = name;
                 PortalLocation = portalLocation;
                 MapLocation = mapLocation;
+                IsOuter = isOuter;
             }
         }
 
@@ -55,21 +57,7 @@ namespace AdventOfCode.Y2019.Day20 {
             _graph.Clear();
 
             // Add all "normal" points to the graph.
-            var standardPoints = new HashSet<Point>(_map.Where(kvp => kvp.Value == '.').Select(kvp => kvp.Key));
-            foreach (var standardPoint in standardPoints)
-            {
-                _graph.AddVertex(standardPoint);
-            }
-
-            foreach (var standardPoint in standardPoints)
-            {
-                foreach (var adj in _allDirections.Select(d => standardPoint.GetPoint(d))
-                    .Where(standardPoints.Contains))
-                {
-                    var edge = new Edge<Point>(standardPoint, adj);
-                    _graph.AddEdge(edge);
-                }
-            }
+            AddAllNormalPoints(_graph, 0);
 
 
             // Get all the portal locations.
@@ -110,15 +98,15 @@ namespace AdventOfCode.Y2019.Day20 {
 
                 // The text is "normalized" (so we can find the accompanying portal).
                 // What is the location of the portal? It depends on where the only adjacent '.' is to the portal.
-                var pointsAdjacentToMap = new[] {point, adjacent.Point}
+                var pointAdjacentToMap = new[] {point, adjacent.Point}
                     .SelectMany(p => _allDirections.Select(d => new {PortalPoint = p, MapPoint = p.GetPoint(d)}))
                     .Where(a => _map.ContainsKey(a.MapPoint) && _map[a.MapPoint] == '.')
-                    .ToArray();
-                //.First();
+                    .ToArray()
+                    .First();
 
-                var pointAdjacentToMap = pointsAdjacentToMap[0];
+                var isOuter = true;
 
-                var portal = new Portal(portalName, pointAdjacentToMap.PortalPoint, pointAdjacentToMap.MapPoint);
+                var portal = new Portal(portalName, pointAdjacentToMap.PortalPoint, pointAdjacentToMap.MapPoint, isOuter);
 
                 // Connect it to the map.
                 //_graph.AddVertex(pointAdjacentToMap.PortalPoint);
@@ -149,6 +137,25 @@ namespace AdventOfCode.Y2019.Day20 {
             _goal = unconnectedPortals["ZZ"].MapLocation;
         }
 
+        private void AddAllNormalPoints(BidirectionalGraph<Point, Edge<Point>> graph, int level)
+        {
+            var standardPoints = new HashSet<Point>(_map.Where(kvp => kvp.Value == '.').Select(kvp => kvp.Key));
+            foreach (var standardPoint in standardPoints)
+            {
+                graph.AddVertex(new Point(level * levelOffset + standardPoint.X, level * levelOffset + standardPoint.Y));
+            }
+
+            foreach (var standardPoint in standardPoints)
+            {
+                foreach (var adj in _allDirections.Select(d => standardPoint.GetPoint(d))
+                    .Where(standardPoints.Contains))
+                {
+                    var edge = new Edge<Point>(standardPoint, adj);
+                    graph.AddEdge(edge);
+                }
+            }
+        }
+
         private void CreateMap(string input)
         {
             _map.Clear();
@@ -175,6 +182,7 @@ namespace AdventOfCode.Y2019.Day20 {
 
         object PartOne(string input)
         {
+            CreateGraph();
             var pathing = _graph.ShortestPathsDijkstra(e => 1, _startingLocation);
             pathing(_goal, out var path);
             
@@ -183,6 +191,7 @@ namespace AdventOfCode.Y2019.Day20 {
         }
 
         object PartTwo(string input) {
+            
             return 0;
         }
     }
