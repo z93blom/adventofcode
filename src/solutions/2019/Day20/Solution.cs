@@ -2,14 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Text;
 using AdventOfCode.Utilities;
 using AdventOfCode.Y2019.Day15;
 using QuickGraph;
 using QuickGraph.Algorithms;
 
-namespace AdventOfCode.Y2019.Day20 {
+namespace AdventOfCode.Y2019.Day20
+{
 
     class Solution : ISolver {
 

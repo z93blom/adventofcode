@@ -26,7 +26,6 @@ namespace AdventOfCode.Y2019.Day17 {
             var map = new Dictionary<Point, char>();
             var y = 0;
             var startingPoint = new Point(0, 0);
-            var startingDirection = Direction.North;
             foreach (var line in result.Lines())
             {
                 Console.WriteLine(line);
