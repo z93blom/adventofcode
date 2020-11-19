@@ -4,7 +4,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using AdventOfCode.Utilities;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using QuickGraph;
 using QuickGraph.Algorithms;
 

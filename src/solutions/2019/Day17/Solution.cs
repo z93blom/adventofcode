@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 using System.Text;
 using AdventOfCode.Utilities;
 using AdventOfCode.Y2019.Day15;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace AdventOfCode.Y2019.Day17 {
 

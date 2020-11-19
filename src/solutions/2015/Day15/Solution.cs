@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Text;
 using AdventOfCode.Utilities;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace AdventOfCode.Y2015.Day15 {
 
