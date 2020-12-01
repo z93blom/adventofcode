@@ -1,6 +1,6 @@
 
-# Advent of Code (2015-2015)
-My C# solutions to the advent of code problems.
+# Advent of Code (2015-2020)
+My C# solutions to the advent of code problems. (My solutions are in the "solutions" branch. The master branch contains the scaffolding).
 Check out http://adventofcode.com.
 
 ## Dependencies
@@ -31,7 +31,7 @@ To run the project:
 3. Get help with `dotnet run`
 ```
 
-Usage: dotnet run -p app/app.csproj [arguments]
+Usage: dotnet run -p src/app/app.csproj [arguments]
 Supported arguments:
 
  [year]/[day|last|all] Solve the specified problems
@@ -45,4 +45,10 @@ To start working on new problems:
                        the readme and creates a solution template.
  update last           Same as above, but for the current day. Works in December only.  
 
+```
+
+Useful commands during december:
+```
+dotnet run -p src/app/app.csproj update last
+dotnet run -p src/app/app.csproj last
 ```
