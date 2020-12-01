@@ -18,9 +18,10 @@ namespace AdventOfCode.Y2020.Day01 {
         }
 
         object PartOne(string input) {
-            var numbers = input.Split(new [] {'\r', '\n'}, StringSplitOptions.RemoveEmptyEntries)
-                 .Select(int.Parse).ToArray();
-            // Brute force
+            var numbers = input.SplitAtNewline()
+                            .Select(int.Parse)
+                            .OrderBy(i => i)
+                            .ToArray();
             for(int i = 0; i < numbers.Length; i++)
             {
                 for(int j = i + 1; j < numbers.Length; j++)
@@ -36,11 +37,10 @@ namespace AdventOfCode.Y2020.Day01 {
         }
 
         object PartTwo(string input) {
-            var numbers = input.Split(new [] {'\r', '\n'}, StringSplitOptions.RemoveEmptyEntries)
-                 .Select(int.Parse)
-                 .OrderBy(i => i)
-                 .ToArray();
-            
+            var numbers = input.SplitAtNewline()
+                            .Select(int.Parse)
+                            .OrderBy(i => i)
+                            .ToArray();
             // Brute force
             for(int i = 0; i < numbers.Length; i++)
             {
