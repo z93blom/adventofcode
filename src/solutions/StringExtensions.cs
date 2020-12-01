@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -65,6 +66,11 @@ namespace AdventOfCode
             var match = Regex.Match(s, pattern);
             groups = match.Groups.Cast<Group>().ToArray();
             return match.Success;
+        }
+
+        public static IEnumerable<string> SplitAtNewline(this string s)
+        {
+            return s.Split(new [] {'\r', '\n'}, StringSplitOptions.RemoveEmptyEntries);
         }
     }
 }
