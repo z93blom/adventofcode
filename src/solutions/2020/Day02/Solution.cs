@@ -18,7 +18,7 @@ namespace AdventOfCode.Y2020.Day02 {
         }
 
         object PartOne(string input) {
-            var lines = input.SplitAtNewline()
+            var lines = input.Lines()
                 .Match(@"(\d+)\-(\d+) ([a-zA-Z])\: ([a-zA-Z]+)")
                 .Select(m => new 
                 {
@@ -40,7 +40,7 @@ namespace AdventOfCode.Y2020.Day02 {
         }
 
         object PartTwo(string input) {
-            var lines = input.SplitAtNewline()
+            var lines = input.Lines()
                 .Match(@"(\d+)\-(\d+) ([a-zA-Z])\: ([a-zA-Z]+)")
                 .Select(m => new 
                 {

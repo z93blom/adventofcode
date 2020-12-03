@@ -67,10 +67,5 @@ namespace AdventOfCode
             groups = match.Groups.Cast<Group>().ToArray();
             return match.Success;
         }
-
-        public static IEnumerable<string> SplitAtNewline(this string s)
-        {
-            return s.Split(new [] {'\r', '\n'}, StringSplitOptions.RemoveEmptyEntries);
-        }
     }
 }

@@ -18,7 +18,7 @@ namespace AdventOfCode.Y2020.Day01 {
         }
 
         object PartOne(string input) {
-            var numbers = input.SplitAtNewline()
+            var numbers = input.Lines()
                             .Select(int.Parse)
                             .OrderBy(i => i)
                             .ToArray();
@@ -37,7 +37,7 @@ namespace AdventOfCode.Y2020.Day01 {
         }
 
         object PartTwo(string input) {
-            var numbers = input.SplitAtNewline()
+            var numbers = input.Lines()
                             .Select(int.Parse)
                             .OrderBy(i => i)
                             .ToArray();
