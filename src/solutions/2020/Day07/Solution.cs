@@ -17,83 +17,76 @@ namespace AdventOfCode.Y2020.Day07 {
             yield return PartTwo(input);
         }
 
-        object PartOne(string input) {
-            var containedIn = new Dictionary<string, HashSet<string>>();
-            var regex = new Regex(@"(.+) bags contain (.*)");
-            var r2 = new Regex(@"(\d+) ([^\.,]*) bags?[\.,]");
+        object PartOne(string input) 
+        {
+            var bagCanBeContainedIn = new Dictionary<string, HashSet<string>>();
+            var outer = new Regex(@"(.+) bags contain (.*)");
+            var inner = new Regex(@"(\d+) ([^\.,]*) bags?[\.,]");
             foreach (var l in input.Lines())
             {
-                var match = regex.Match(l);
-                var m2 = r2.Matches(match.Groups[2].Value);
-                var container = match.Groups[1].Value;
-                foreach(var bagMatch in m2.OfType<Match>())
+                var outerMatch = outer.Match(l);
+                var innerMatch = inner.Matches(outerMatch.Groups[2].Value);
+                var container = outerMatch.Groups[1].Value;
+                foreach(var match in innerMatch.OfType<Match>())
                 {
-                    var bag = bagMatch.Groups[2].Value;
-                    if (!containedIn.ContainsKey(bag))
-                    {
-                        containedIn[bag] = new HashSet<string>();
-                    }
-                    containedIn[bag].Add(container);
+                    var bag = match.Groups[2].Value;
+                    if (!bagCanBeContainedIn.ContainsKey(bag))
+                        bagCanBeContainedIn[bag] = new HashSet<string>();
+                    bagCanBeContainedIn[bag].Add(container);
                 }
             }
 
-            // Assume no loops!
-            var containers = new HashSet<string>();
+            var possibleContainers = new HashSet<string>();
             var q = new Queue<string>();
             q.Enqueue("shiny gold");
             while(q.Count > 0)
             {
                 var l = q.Dequeue();
-                if (!containedIn.ContainsKey(l))
+                if (!bagCanBeContainedIn.ContainsKey(l))
                     continue;
-                foreach(var container in containedIn[l])
+                foreach(var container in bagCanBeContainedIn[l])
                 {
-                    containers.Add(container);
+                    possibleContainers.Add(container);
                     q.Enqueue(container);
                 }
             }
 
-            return containers.Count;
+            return possibleContainers.Count;
         }
 
         public record BagCount
         {
             public int Count { get; }
             public string Color { get; }
-
             public BagCount(int count, string color) => (Count, Color) = (count, color);
         }
 
-        object PartTwo(string input) {
-            var contains = new Dictionary<string, List<BagCount>>();
-            var regex = new Regex(@"(.+) bags contain (.*)");
-            var r2 = new Regex(@"(\d+) ([^\.,]*) bags?[\.,]");
+        object PartTwo(string input)
+        {
+            var bagContents = new Dictionary<string, List<BagCount>>();
+            var outer = new Regex(@"(.+) bags contain (.*)");
+            var inner = new Regex(@"(\d+) ([^\.,]*) bags?[\.,]");
             foreach (var l in input.Lines())
             {
-                var match = regex.Match(l);
-                var m2 = r2.Matches(match.Groups[2].Value);
-                var container = match.Groups[1].Value;
-                var c = m2.OfType<Match>()
+                var outerMatch = outer.Match(l);
+                var innerMatch = inner.Matches(outerMatch.Groups[2].Value);
+                var container = outerMatch.Groups[1].Value;
+                var contents = innerMatch.OfType<Match>()
                     .Select(m => new BagCount(int.Parse(m.Groups[1].Value), m.Groups[2].Value))
                     .ToList();
-                contains[match.Groups[1].Value] = c;
+                bagContents[outerMatch.Groups[1].Value] = contents;
             }
 
-            var cache = new Dictionary<string, long>();
-            var count = BagsInside(contains, cache, "shiny gold");
-
+            var count = BagsInside(bagContents, new Dictionary<string, long>(), "shiny gold");
             return count;
         }
 
         private long BagsInside(Dictionary<string, List<BagCount>> lookup, Dictionary<string, long> cache, string color)
         {
             if (cache.ContainsKey(color))
-            {
                 return cache[color];
-            }
 
             long count = 0;
-
             foreach(var bc in lookup[color])
             {
                 var inside = BagsInside(lookup, cache, bc.Color) + 1;
