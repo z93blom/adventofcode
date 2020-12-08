@@ -31,7 +31,7 @@ To run the project:
 3. Get help with `dotnet run`
 ```
 
-Usage: dotnet run -p app/app.csproj [arguments]
+Usage: dotnet run -p src/app/app.csproj [arguments]
 Supported arguments:
 
  [year]/[day|last|all] Solve the specified problems
@@ -45,4 +45,9 @@ To start working on new problems:
                        the readme and creates a solution template.
  update last           Same as above, but for the current day. Works in December only.  
 
+```
+Useful commands during december:
+```
+dotnet run -p src/app/app.csproj update last
+dotnet run -p src/app/app.csproj last
 ```
