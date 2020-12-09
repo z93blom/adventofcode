@@ -48,7 +48,6 @@ To start working on new problems:
 ```
 
 Useful commands during december:
-```
-dotnet run -p src/app/app.csproj update last
-dotnet run -p src/app/app.csproj last
-```
+ dotnet run -p src/app/app.csproj update last
+ dotnet run -p src/app/app.csproj last
+

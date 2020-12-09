@@ -45,9 +45,8 @@ To start working on new problems:
                        the readme and creates a solution template.
  update last           Same as above, but for the current day. Works in December only.  
 
-```
 Useful commands during december:
-```
-dotnet run -p src/app/app.csproj update last
-dotnet run -p src/app/app.csproj last
+ dotnet run -p src/app/app.csproj update last
+ dotnet run -p src/app/app.csproj last 
+
 ```
