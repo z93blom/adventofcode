@@ -39,16 +39,13 @@ namespace AdventOfCode.Y2020.Day10 {
                 .Select(int.Parse)
                 .OrderBy(v => v)
                 .ToArray();
-            var diffs = values.Select((v, i) => i == 0 ? v - 0 : v - values[i-1])
-                .ToArray();
-            var consecutiveOnes = diffs.GroupConsecutive()
+            var result = values
+                .Select((v, i) => i == 0 ? v - 0 : v - values[i-1]) // The difference between each position
+                .GroupConsecutive()
                 .Where(g => g.Key == 1 && g.Count() > 1) // Only select the ones where there are consecutive 1:s.
                 .Select(g => g.Count() + 1) // There is actually an extra 1 in the group.
-                .ToArray();
-            
-            var result = consecutiveOnes.Select(v => v switch { 3 => 2, 4 => 4, 5 => 7, _ => 1})
+                .Select(v => v switch { 3 => 2, 4 => 4, 5 => 7, _ => 1})
                 .Aggregate(1L, (a, v) => a*v);
-
             return result;
         }
     }
