@@ -27,5 +27,10 @@ namespace AdventOfCode
         public ImmutableArray<TElement> Elements { get; }
 
         public TElement this[int i] => this.Elements[i];
+
+        public override string ToString()
+        {
+            return $"Key: {Key}. Count {Elements.Length}";
+        }
     }
 }
