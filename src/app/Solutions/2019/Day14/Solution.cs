@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Text;
 using AdventOfCode.Utilities;
-using QuickGraph;
+using QuikGraph;
 
 namespace AdventOfCode.Y2019.Day14 {
 

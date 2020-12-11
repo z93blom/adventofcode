@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Text;
 using AdventOfCode.Utilities;
-using QuickGraph;
-using QuickGraph.Algorithms;
-using QuickGraph.Algorithms.Observers;
-using QuickGraph.Algorithms.ShortestPath;
+using QuikGraph;
+using QuikGraph.Algorithms;
+using QuikGraph.Algorithms.Observers;
+using QuikGraph.Algorithms.ShortestPath;
 using System.Diagnostics;
 
 namespace AdventOfCode.Y2019.Day15 {

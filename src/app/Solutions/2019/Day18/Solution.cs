@@ -5,8 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using AdventOfCode.Utilities;
 using AdventOfCode.Y2019.Day15;
-using QuickGraph;
-using QuickGraph.Algorithms;
+using QuikGraph;
+using QuikGraph.Algorithms;
 
 namespace AdventOfCode.Y2019.Day18 {
 
@@ -285,7 +285,7 @@ namespace AdventOfCode.Y2019.Day18 {
         private BidirectionalGraph<Point, Edge<Point>> BuildGraph(HashSet<Point> map)
         {
             var location = map.First();
-            var graph = new QuickGraph.BidirectionalGraph<Point, Edge<Point>>();
+            var graph = new QuikGraph.BidirectionalGraph<Point, Edge<Point>>();
             foreach (var point in map)
             {
                 graph.AddVertex(point);

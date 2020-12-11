@@ -10,8 +10,7 @@ using System.Collections.Generic;
 
 namespace AdventOfCode
 {
-
-    public class Updater {
+   public class Updater {
 
         public async Task Update(int year, int day, IEnumerable<Type> solvers, IUsageProvider usageProvider) {
             if (!System.Environment.GetEnvironmentVariables().Contains("SESSION")) {

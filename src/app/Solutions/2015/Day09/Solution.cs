@@ -4,8 +4,8 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using AdventOfCode.Utilities;
-using QuickGraph;
-using QuickGraph.Algorithms;
+using QuikGraph;
+using QuikGraph.Algorithms;
 
 namespace AdventOfCode.Y2015.Day09 {
 

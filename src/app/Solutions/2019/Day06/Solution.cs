@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Text;
 using AdventOfCode.Utilities;
-using QuickGraph.Algorithms.Search;
+using QuikGraph.Algorithms.Search;
 
 namespace AdventOfCode.Y2019.Day06 {
 
@@ -22,7 +22,7 @@ namespace AdventOfCode.Y2019.Day06 {
         object PartOne(string input) {
             var edges = input.Lines()
                 .Select(l => new Edge<string>(l.Substring(0, 3), l.Substring(4, 3)));
-            var graph = new QuickGraph.BidirectionalGraph<string, Edge<string>>();
+            var graph = new QuikGraph.BidirectionalGraph<string, Edge<string>>();
             foreach (var edge in edges)
             {
                 graph.AddVertex(edge.Source);
@@ -61,7 +61,7 @@ namespace AdventOfCode.Y2019.Day06 {
         object PartTwo(string input) {
             var edges = input.Lines()
                 .Select(l => new Edge<string>(l.Substring(0, 3), l.Substring(4, 3)));
-            var graph = new QuickGraph.BidirectionalGraph<string, Edge<string>>();
+            var graph = new QuikGraph.BidirectionalGraph<string, Edge<string>>();
             var outerToInner = new Dictionary<string, string>();
             foreach (var edge in edges)
             {

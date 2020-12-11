@@ -1,8 +1,8 @@
 using AdventOfCode.Generator;
 
-namespace AdventOfCode.App
+namespace AdventOfCode
 {
-    public class ApplicationUsage: IUsageProvider
+    public class ApplicationUsage : IUsageProvider
     {
         public string Usage() => $@"
                > Usage: dotnet run -p src/app/app.csproj [arguments]

@@ -26,7 +26,7 @@ namespace AdventOfCode
         }
 
         public static string WorkingDir(int year) {
-            return Path.Combine("src", "solutions", year.ToString());
+            return Path.Combine("src", "app", "Solutions", year.ToString());
         }
 
         public static string WorkingDir(int year, int day) {

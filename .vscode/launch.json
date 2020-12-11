@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/app/bin/Debug/net5.0/app.dll",
+            "program": "${workspaceFolder}/src/app/bin/Debug/net5.0/adventofcode.dll",
             "args": ["last"],
             "cwd": "${workspaceFolder}",
             "console": "internalConsole",

@@ -3,7 +3,6 @@ using AdventOfCode.Model;
 
 namespace AdventOfCode.Generator
 {
-
     public class ReadmeGeneratorForYear {
         public string Generate(Calendar calendar) {
             var calendarLines =

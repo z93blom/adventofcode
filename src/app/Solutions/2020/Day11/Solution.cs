@@ -61,6 +61,7 @@ namespace AdventOfCode.Y2020.Day11 {
                  Seating.Floor => '.',
                  Seating.Empty => 'L',
                  Seating.Occupied => '#',
+                 _ => throw new Exception("Unexpected input"),
             };          
         }
         private Seating ToSeating(char c)

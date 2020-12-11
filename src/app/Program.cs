@@ -1,13 +1,11 @@
-﻿using AdventOfCode;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Text.RegularExpressions;
 
-namespace AdventOfCode.App
+namespace AdventOfCode
 {
     class Program
     {
@@ -17,7 +15,8 @@ namespace AdventOfCode.App
 
             var entryAssembly = Assembly.GetEntryAssembly();
             var files = Directory.EnumerateFiles(Path.GetDirectoryName(entryAssembly.Location), "solutions.dll");
-            var assemblies = files.Select(f => AssemblyLoadContext.Default.LoadFromAssemblyPath(f));
+            var assemblies = files.Select(f => AssemblyLoadContext.Default.LoadFromAssemblyPath(f)).ToList();
+            assemblies.Add(typeof(Program).Assembly);
             
             var tsolvers = assemblies.SelectMany(a => a.GetTypes())
                 .Where(t => t.GetTypeInfo().IsClass && typeof(ISolver).IsAssignableFrom(t))
@@ -98,6 +97,5 @@ namespace AdventOfCode.App
         static string[] Args(params string[] regex) {
             return regex;
         }
-
     }
 }
