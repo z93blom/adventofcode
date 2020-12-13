@@ -82,6 +82,7 @@ namespace AdventOfCode
         private static void Write(ConsoleColor color = ConsoleColor.Gray, string text = "") {
             Console.ForegroundColor = color;
             Console.Write(text);
+            Console.ResetColor();
         }
     }
 }
