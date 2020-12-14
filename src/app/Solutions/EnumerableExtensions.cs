@@ -87,5 +87,10 @@ namespace AdventOfCode
                 }
             }
         }
+
+        public static IEnumerable<T> AsEnumerable<T>(this T item)
+        {
+            yield return item; 
+        }
     }
 }
