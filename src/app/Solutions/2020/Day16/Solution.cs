@@ -53,7 +53,6 @@ namespace AdventOfCode.Y2020.Day16 {
                         int.Parse(m.Groups[5].Value)))
                 .ToArray();
             
-            //var myTicket = parts[1].Lines().Skip(1).Split(',').Select(int.Parse).ToArray();
 
             var otherTickets = parts[2].Lines()
                 .Skip(1)
@@ -101,7 +100,7 @@ namespace AdventOfCode.Y2020.Day16 {
             var myTicket = parts[1].Lines()
                 .Skip(1)
                 .Select(s => s.Split(',').Select(int.Parse).ToArray())
-                .ToArray()[0];
+                .First();
 
             var otherTickets = parts[2].Lines()
                 .Skip(1)
@@ -110,37 +109,37 @@ namespace AdventOfCode.Y2020.Day16 {
             
             var validTickets = new List<int[]>();
 
-
             foreach(var t in otherTickets)
             {
-                var valid = false;
+                var ticketIsValid = true;
                 foreach(var v in t)
                 {
+                    var valid = false;
                     foreach(var f in fields)
                     {
                         if (f.IsInRange(v))
                         {
                             valid = true;
+                            break;
                         }
                     }
 
                     if (!valid)
                     {
+                        ticketIsValid = false;
                         break;
                     }
                 }
 
-                if (valid)
-                {
+                if (ticketIsValid)
                     validTickets.Add(t);
-                }
             }
 
             var possibleFieldMapper = new Dictionary<int, List<string>>();
             foreach(var field in fields)
             {
                 var matchFound = false;
-                for(var index = 0; index < validTickets[0].Length; index++)
+                for(var index = 0; index < fields.Length; index++)
                 {
                     var values = validTickets.Select(t => t[index]).ToArray();
                     bool allMatches = values.All(v => field.IsInRange(v));
@@ -155,7 +154,7 @@ namespace AdventOfCode.Y2020.Day16 {
 
                 if (!matchFound)
                 {
-                    throw new Exception($"Unable to match field {field.Name} to any column.");
+                    //throw new Exception($"Unable to match field '{field.Name}' to any column.");
                 }
             }
 
