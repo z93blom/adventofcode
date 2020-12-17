@@ -306,29 +306,46 @@ namespace AdventOfCode.Y2020.Day17 {
 
             public void ApplyRules()
             {
-                var points = PointsToEvaluate().ToArray();
+                var points = PointsToEvaluate2().Distinct().ToArray();
                 foreach (var p in points)
                 {
-                    var c = this[p];
-                    var activeNeighbors = GetAdjacentActiveCubes(p).Count();
-                    if (c.Current == State.Active)
+                    Evaluate(p);
+                }
+            }
+
+            public IEnumerable<Point4> PointsToEvaluate2()
+            {
+                foreach(var p in this.cubes.Keys)
+                {
+                    yield return p;
+                    foreach(var a in p.GetAdjacent())
                     {
-                        // If a cube is *active* and *exactly `2` or `3`* of its
-                        // neighbors are also active, the cube remains *active*.
-                        // Otherwise, the cube becomes *inactive*.
-                        if (activeNeighbors == 2 || activeNeighbors == 3)
-                        {
-                            c.Next = State.Active;
-                        }
+                        yield return a;
                     }
-                    else
+                }
+            }
+
+            private void Evaluate(Point4 p)
+            {
+                var c = this[p];
+                var activeNeighbors = GetAdjacentActiveCubes(p).Count();
+                if (c.Current == State.Active)
+                {
+                    // If a cube is *active* and *exactly `2` or `3`* of its
+                    // neighbors are also active, the cube remains *active*.
+                    // Otherwise, the cube becomes *inactive*.
+                    if (activeNeighbors == 2 || activeNeighbors == 3)
                     {
-                        // If a cube is *inactive* but *exactly `3`* of its
-                        // neighbors are active, the cube becomes *active*.
-                        // Otherwise, the cube remains *inactive*.
-                        if (activeNeighbors == 3)
-                            c.Next = State.Active;
+                        c.Next = State.Active;
                     }
+                }
+                else
+                {
+                    // If a cube is *inactive* but *exactly `3`* of its
+                    // neighbors are active, the cube becomes *active*.
+                    // Otherwise, the cube remains *inactive*.
+                    if (activeNeighbors == 3)
+                        c.Next = State.Active;
                 }
             }
 
@@ -431,14 +448,14 @@ namespace AdventOfCode.Y2020.Day17 {
                 }
             }
 
-            //Console.Write(g.ToString());
+            Console.Write(g.ToString());
 
             Console.WriteLine($"... Cycle {g.Cycle} finished. There are {g.ActiveCount} cubes.");
             while(g.Cycle < 6)
             {
                 g.ApplyRules();
                 g.NextCycle();
-                //Console.Write(g.ToString());
+                Console.Write(g.ToString());
                 Console.WriteLine($"... Cycle {g.Cycle} finished. There are {g.ActiveCount} cubes.");
             }
 
