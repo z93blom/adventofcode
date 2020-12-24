@@ -237,21 +237,16 @@ namespace AdventOfCode.Y2020 {
             Write(0xffff66, "*\n           ");
             Write(0x9900, "''         ");
             Write(0x66ff, "~                 ");
-            Write(0x9900, ".");
-            Write(0x888888, "'");
-            Write(0x9900, "..");
+            Write(0x9900, ".'..");
             Write(0x888888, "\\___");
-            Write(0x9900, "'");
-            Write(0x888888, "'");
-            Write(0x9900, "..       ");
+            Write(0x9900, "''..       ");
             Write(0x66ff, "~  ");
             Write(0x888888, "24 ");
-            Write(0xffff66, "*");
-            Write(0x888888, "*\n                ");
-            Write(0x66ff, "~          ~");
-            Write(0x888888, "        ~    ");
-            Write(0x9900, "'.");
-            Write(0x888888, "'  : [] .'  ");
+            Write(0xfff66, "*");
+            Write(0xffff66, "*\n                ");
+            Write(0x66ff, "~          ~        ~    ");
+            Write(0x9900, "'.'  : ");
+            Write(0x888888, "[] .'  ");
             Write(0x66ff, "~      ");
             Write(0x888888, "25\n           \n");
             

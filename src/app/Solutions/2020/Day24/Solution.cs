@@ -65,8 +65,80 @@ namespace AdventOfCode.Y2020.Day24 {
             }
         }
 
-        object PartTwo(string input) {
-            return 0;
+        public class Exhibit
+        {
+            public HashSet<Hex> Blacks;
+
+            public int Day;
+            public Exhibit(IEnumerable<Hex> initial)
+            {
+                Blacks = new HashSet<Hex>(initial);
+                Day = 0;
+            }
+
+            public void Next()
+            {
+                var newBlacks = new HashSet<Hex>();
+                foreach(var hex in Relevant().Distinct())
+                {
+                    if (Blacks.Contains(hex))
+                    {
+                        // Any black tile with zero or more than 2 black tiles immediately adjacent to it is flipped to white.
+                        var blackNeighbors = Neighbors(hex).Count(h => Blacks.Contains(h));
+                        if (blackNeighbors == 1 || blackNeighbors == 2)
+                            newBlacks.Add(hex);
+                    }
+                    else
+                    {
+                        // Any white tile with exactly 2 black tiles immediately adjacent to it is flipped to black.
+                        var blackNeighbors = Neighbors(hex).Count(h => Blacks.Contains(h));
+                        if (blackNeighbors == 2)
+                            newBlacks.Add(hex);
+                    }
+                }
+
+                Blacks = newBlacks;
+                Day += 1;
+            }
+
+            private IEnumerable<Hex> Relevant()
+            {
+                foreach (var hex in Blacks)
+                {
+                    yield return hex;
+                    foreach(var h in Neighbors(hex))
+                    {
+                        yield return h;
+                    }
+                }
+            }
+
+            private IEnumerable<Hex> Neighbors(Hex hex)
+            {
+                for(var d = 0; d < 6; d++)
+                {
+                    yield return hex.Neighbor(d);
+                }
+            }
+
         }
+
+        object PartTwo(string input) {
+             var origo = new Hex(0, 0, 0);
+            var locations = input.Lines()
+                .Select(s => ToHexDirections(s).Aggregate(origo, (a, d) => a.Neighbor(d)))
+                .ToArray();
+            
+            var blacks = locations.GroupBy(h => h).Where(g => g.Count() % 2 == 1).Select(g => g.Key);
+            var exhibit = new Exhibit(blacks);
+
+            for(int i = 0; i < 100; i++)
+            {
+                exhibit.Next();
+                Console.Out.WriteLine($"Day {exhibit.Day}: {exhibit.Blacks.Count}");
+            }
+            
+            return exhibit.Blacks.Count;
+       }
     }
 }
